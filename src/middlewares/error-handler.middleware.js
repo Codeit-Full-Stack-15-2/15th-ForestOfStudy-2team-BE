@@ -1,13 +1,13 @@
-import { HttpException } from "#src/errors/http-exception.js";
-import { isDevelopment } from "#src/config/config.js";
+import { isDevelopment } from '#src/config/config.js';
+import { HttpException } from '#src/errors/http-exception.js';
 
 export const errorHandler = (error, _req, res, _next) => {
-  console.error("error", error);
+  console.error('error', error);
 
   if (error instanceof SyntaxError && error.status === 400) {
     return res.status(400).json({
       success: false,
-      message: "요청 본문이 올바른 JSON 형식이 아닙니다.",
+      message: '요청 본문이 올바른 JSON 형식이 아닙니다.',
     });
   }
 
@@ -18,9 +18,9 @@ export const errorHandler = (error, _req, res, _next) => {
     });
   }
 
-   const result = {
+  const result = {
     success: false,
-    message: "Internal Server Error",
+    message: 'Internal Server Error',
   };
 
   if (isDevelopment) {
