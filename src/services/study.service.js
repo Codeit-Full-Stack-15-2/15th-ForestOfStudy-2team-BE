@@ -18,3 +18,24 @@ export const createStudyService = async (studyData) => {
   const newStudy = await studyRepository.createStudyRecord(studyPayload);
   return newStudy;
 };
+
+export const verifyPasswordService = async (studyId, inputPassword) => {
+  // 1. DB에서 해당 스터디의 해시된 비밀번호를 가져옵니다.
+  const study = await studyRepository.findStudyById(studyId);
+
+  if (!study) {
+    const error = new Error('존재하지 않는 스터디입니다.');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const isMatch = await bcrypt.compare(inputPassword, study.studyPassword);
+
+  if (!isMatch) {
+    const error = new Error('비밀번호가 일치하지 않습니다.');
+    error.statusCode = 401;
+    throw error;
+  }
+
+  return { studyId: study.id };
+};

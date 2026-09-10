@@ -16,6 +16,27 @@ export const createStudy = async (req, res, next) => {
     next(error);
   }
 };
+export const verifyStudyPassword = async (req, res, next) => {
+  try {
+    const { study_id } = req.params;
+    const { study_password } = req.body;
+
+    // 서비스 계층에 검증 로직 위임
+    const { studyId } = await studyService.verifyPasswordService(
+      study_id,
+      study_password,
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: studyId,
+      message: '비밀번호가 확인되었습니다.',
+    });
+  } catch (error) {
+    // 서비스에서 발생한 401, 404 등 예외를 중앙 에러 핸들러로 전달
+    next(error);
+  }
+};
 export const getStudy = (req, res, next) => {};
 export const updateStudy = (req, res, next) => {};
 export const deleteStudy = (req, res, next) => {};

@@ -30,3 +30,9 @@ export const createStudySchema = z.object({
     .min(0, '포인트는 0 이상이어야 합니다.')
     .default(0),
 });
+
+export const verifyPasswordSchema = z.object({
+  study_password: z
+    .string({ required_error: '비밀번호는 필수 입력값입니다.' })
+    .min(4, { message: '비밀번호는 최소 4글자 이상이어야 합니다.' }),
+});

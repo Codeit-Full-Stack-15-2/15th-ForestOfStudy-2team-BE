@@ -12,3 +12,11 @@ export const createStudyRecord = async (data) => {
     },
   });
 };
+
+export const findStudyById = async (studyId) => {
+  return await prisma.study.findUnique({
+    where: {
+      id: Number(studyId),
+    },
+  });
+};
