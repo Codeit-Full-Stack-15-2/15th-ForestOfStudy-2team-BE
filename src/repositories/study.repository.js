@@ -14,9 +14,10 @@ export const createStudyRecord = async (data) => {
 };
 
 export const findStudyById = async (studyId) => {
-  return await prisma.study.findUnique({
+  return await prisma.study.findFirst({
     where: {
       id: Number(studyId),
+      deletedAt: null,
     },
   });
 };
