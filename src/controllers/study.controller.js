@@ -27,7 +27,7 @@ export const verifyStudyPassword = async (req, res, next) => {
       study_password,
     );
 
-    return res.status(200).json({
+    return res.status(HTTP_STATUS.OK).json({
       success: true,
       data: { token },
       message: '비밀번호가 확인되었습니다.',
@@ -38,7 +38,7 @@ export const verifyStudyPassword = async (req, res, next) => {
 };
 export const verifyToken = (req, res, next) => {
   try {
-    return res.status(200).json({
+    return res.status(HTTP_STATUS.OK).json({
       success: true,
       data: { studyId: req.studyId },
       message: '유효한 토큰입니다.',
@@ -51,7 +51,7 @@ export const getStudy = async (req, res, next) => {
   try {
     const studyId = req.params.study_id;
     const study = await studyService.getStudyService(studyId);
-    return res.status(200).json({
+    return res.status(HTTP_STATUS.OK).json({
       success: true,
       data: study,
       messgae: '스터디 정보 조회에 성공했습니다.',
