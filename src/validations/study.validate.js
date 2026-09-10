@@ -36,3 +36,13 @@ export const verifyPasswordSchema = z.object({
     .string({ required_error: '비밀번호는 필수 입력값입니다.' })
     .min(4, { message: '비밀번호는 최소 4글자 이상이어야 합니다.' }),
 });
+
+export const studyIdSchema = z.object({
+  study_id: z.coerce
+    .number({
+      required_error: '스터디 아이디는 숫자여야 합니다.',
+    })
+    .int({
+      message: '스터디 아이디는 정수여야 합니다.',
+    }),
+});

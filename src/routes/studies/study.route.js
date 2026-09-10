@@ -1,7 +1,9 @@
 import * as studyController from '#src/controllers/study.controller.js';
+import { verifyAccessToken } from '#src/middlewares/auth.middleware.js';
 import { validate } from '#src/middlewares/validate.middleware.js';
 import {
   createStudySchema,
+  studyIdSchema,
   verifyPasswordSchema,
 } from '#src/validations/study.validate.js';
 import { Router } from 'express';
@@ -9,7 +11,12 @@ export const studyRoute = Router();
 
 studyRoute.get('/', studyController.getStudies); // 스터디 리스트 조회
 studyRoute.post('/', validate(createStudySchema), studyController.createStudy); // 스터디 만들기
-studyRoute.get('/:study_id', studyController.getStudy); // 스터디 개별 조회
+studyRoute.get(
+  '/:study_id',
+  validate(studyIdSchema, 'params'),
+  studyController.getStudy,
+); // 스터디 개별 조회
+studyRoute.get('/verify', verifyAccessToken, studyController.verifyToken);
 studyRoute.post(
   '/:study_id/verify',
   validate(verifyPasswordSchema),

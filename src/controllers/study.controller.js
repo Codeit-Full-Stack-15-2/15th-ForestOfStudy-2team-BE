@@ -22,22 +22,44 @@ export const verifyStudyPassword = async (req, res, next) => {
     const { study_password } = req.body;
 
     // 서비스 계층에 검증 로직 위임
-    const { studyId } = await studyService.verifyPasswordService(
+    const { token } = await studyService.verifyPasswordService(
       study_id,
       study_password,
     );
 
     return res.status(200).json({
       success: true,
-      data: studyId,
+      data: { token },
       message: '비밀번호가 확인되었습니다.',
     });
   } catch (error) {
-    // 서비스에서 발생한 401, 404 등 예외를 중앙 에러 핸들러로 전달
     next(error);
   }
 };
-export const getStudy = (req, res, next) => {};
+export const verifyToken = (req, res, next) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      data: { studyId: req.studyId },
+      message: '유효한 토큰입니다.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getStudy = async (req, res, next) => {
+  try {
+    const studyId = req.params.study_id;
+    const study = await studyService.getStudyService(studyId);
+    return res.status(200).json({
+      success: true,
+      data: study,
+      messgae: '스터디 정보 조회에 성공했습니다.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 export const updateStudy = (req, res, next) => {};
 export const deleteStudy = (req, res, next) => {};
 export const createReaction = (req, res, next) => {};

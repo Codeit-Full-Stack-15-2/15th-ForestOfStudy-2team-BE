@@ -1,5 +1,6 @@
 import * as studyRepository from '#src/repositories/study.repository.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 export const createStudyService = async (studyData) => {
   const saltRounds = 10;
@@ -37,5 +38,19 @@ export const verifyPasswordService = async (studyId, inputPassword) => {
     throw error;
   }
 
-  return { studyId: study.id };
+  const token = jwt.sign({ studyId: study.id }, process.env.JWT_SECRET);
+
+  return { verified: true, token };
+};
+
+export const getStudyService = async (studyId) => {
+  const study = await studyRepository.findStudyById(studyId);
+  return {
+    id: study.id,
+    nickname: study.nickname,
+    title: study.title,
+    description: study.description,
+    background: study.background,
+    point: study.point,
+  };
 };

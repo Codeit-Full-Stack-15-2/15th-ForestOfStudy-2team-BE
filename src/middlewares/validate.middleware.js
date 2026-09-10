@@ -1,6 +1,7 @@
-export const validate = (schema) => {
+export const validate = (schema, target = 'body') => {
   return (req, res, next) => {
-    const result = schema.safeParse(req.body);
+    const dataToValidate = req[target];
+    const result = schema.safeParse(dataToValidate);
 
     if (!result.success) {
       const errorMessage = result.error.errors[0].message;
@@ -10,7 +11,7 @@ export const validate = (schema) => {
       return;
     }
 
-    req.body = result.data;
+    req[target] = result.data;
     next();
   };
 };
