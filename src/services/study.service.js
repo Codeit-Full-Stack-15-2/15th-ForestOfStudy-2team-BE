@@ -1,3 +1,5 @@
+import { NotFoundException } from '#src/errors/not-found-exception.js';
+import { UnauthorizedException } from '#src/errors/unauthorized-exception.js';
 import * as studyRepository from '#src/repositories/study.repository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -24,17 +26,13 @@ export const verifyPasswordService = async (studyId, inputPassword) => {
   const study = await studyRepository.findStudyById(studyId);
 
   if (!study) {
-    const error = new Error('존재하지 않는 스터디입니다.');
-    error.statusCode = 404;
-    throw error;
+    throw new NotFoundException('존재하지 않는 스터디입니다.');
   }
 
   const isMatch = await bcrypt.compare(inputPassword, study.studyPassword);
 
   if (!isMatch) {
-    const error = new Error('비밀번호가 일치하지 않습니다.');
-    error.statusCode = 401;
-    throw error;
+    throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
   }
 
   const token = jwt.sign({ studyId: study.id }, process.env.JWT_SECRET);
