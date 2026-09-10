@@ -1,7 +1,6 @@
 // 공통 generator 및 datasource
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {

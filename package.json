@@ -9,7 +9,7 @@
     "lint": "eslint \"src/**/*.js\"",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prisma:generate": "prisma generate",
+    "prisma:generate": "prisma generate --schema=./prisma",
     "prisma:migrate": "dotenv -e ./env/.env.development -- npx prisma migrate dev",
     "prisma:studio": "dotenv -e ./env/.env.development -- npx prisma studio"
   },
@@ -24,9 +24,12 @@
     "#src/*": "./src/*"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "pg": "^8.23.0",
     "zod": "^4.5.4"
   },
   "devDependencies": {
