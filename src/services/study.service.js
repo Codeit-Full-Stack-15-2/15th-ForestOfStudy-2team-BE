@@ -44,6 +44,7 @@ export const verifyPasswordService = async (studyId, inputPassword) => {
 
 export const getStudyService = async (studyId) => {
   const study = await studyRepository.findStudyById(studyId);
+  console.log(study);
   return {
     id: study.id,
     nickname: study.nickname,
@@ -51,5 +52,7 @@ export const getStudyService = async (studyId) => {
     description: study.description,
     background: study.background,
     point: study.point,
+    createdAt: study.createdAt,
+    reactions: [],
   };
 };

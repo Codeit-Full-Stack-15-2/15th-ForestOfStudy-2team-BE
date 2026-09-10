@@ -22,8 +22,16 @@ studyRoute.post(
   validate(verifyPasswordSchema),
   studyController.verifyStudyPassword,
 );
-studyRoute.patch('/:study_id', studyController.updateStudy); // 스터디 수정
-studyRoute.delete('/:study_id', studyController.deleteStudy); // 스터디 삭제
+studyRoute.patch(
+  '/:study_id',
+  validate(studyIdSchema, 'params'),
+  studyController.updateStudy,
+); // 스터디 수정
+studyRoute.delete(
+  '/:study_id',
+  validate(studyIdSchema, 'params'),
+  studyController.deleteStudy,
+); // 스터디 삭제
 
 // 스터디 종속 서브 리소스
 // studyRoute.post('/:study_id/focus_logs', createFocusLog); // 집중 로그 만들기
