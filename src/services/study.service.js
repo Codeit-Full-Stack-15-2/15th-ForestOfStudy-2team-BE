@@ -21,7 +21,6 @@ export const createStudyService = async (studyData) => {
 };
 
 export const verifyPasswordService = async (studyId, inputPassword) => {
-  // 1. DB에서 해당 스터디의 해시된 비밀번호를 가져옵니다.
   const study = await studyRepository.findStudyById(studyId);
 
   if (!study) {
