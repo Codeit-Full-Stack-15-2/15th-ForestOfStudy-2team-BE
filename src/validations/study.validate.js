@@ -11,10 +11,7 @@ export const createStudySchema = z.object({
     .min(1, '스터디 이름은 비워둘 수 없습니다.')
     .max(10, '스터디 이름은 10자 이하여야 합니다.'),
 
-  description: z
-    .string({ required_error: '소개글은 필수 입력 항목입니다.' })
-    .min(1, '소개글을 반드시 입력해주세요.')
-    .max(100, '소개글은 100자 이하여야 합니다.'),
+  description: z.string().max(100, '소개글은 100자 이하여야 합니다.').nullish(),
 
   background: z
     .string({ required_error: '배경화면 정보는 필수입니다.' })
