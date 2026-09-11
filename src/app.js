@@ -16,6 +16,7 @@ if (isDevelopment) {
 
 app.use('/api', router);
 
+// vercel-heath-check
 app.get('/', (req, res) => res.send('API Server is successfully running!'));
 
 app.use(errorHandler);
