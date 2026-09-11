@@ -21,7 +21,7 @@ app.get('/', (req, res) => res.send('API Server is successfully running!'));
 
 app.use(errorHandler);
 
-// 수정전: export default app;
-export default function handler(req, res) {
-  return app(req, res);
-}
+export default app;
+// export default function handler(req, res) {
+//   return app(req, res);
+// }
