@@ -1,0 +1,9 @@
+// 공통 generator 및 datasource
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
