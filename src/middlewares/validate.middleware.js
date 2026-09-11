@@ -11,10 +11,8 @@ const createValidator = (target) => (schema) => {
       return next(new BadRequestException(errorMessage));
     }
 
-    req.validated = {
-      ...req.validated,
-      [target]: result.data,
-    };
+    req.validated = req.validated || {};
+    req.validated[target] = result.data;
 
     next();
   };

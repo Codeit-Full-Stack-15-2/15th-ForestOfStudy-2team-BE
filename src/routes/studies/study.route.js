@@ -29,6 +29,7 @@ studyRoute.get(
 studyRoute.get('/verify', verifyAccessToken, studyController.verifyToken);
 studyRoute.post(
   '/:study_id/verify',
+  validateParams(studyIdSchema),
   validateBody(verifyPasswordSchema),
   studyController.verifyStudyPassword,
 ); // 스터디 비밀번호 검증
