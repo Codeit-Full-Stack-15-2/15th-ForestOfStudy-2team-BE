@@ -5,7 +5,7 @@ export const getStudies = (req, res, next) => {};
 
 export const createStudy = async (req, res, next) => {
   try {
-    const newStudy = await studyService.createStudyService(req.body);
+    const newStudy = await studyService.createStudyService(req.validated.body);
     res.status(HTTP_STATUS.CREATE).json({
       success: true,
       data: newStudy,
@@ -18,8 +18,8 @@ export const createStudy = async (req, res, next) => {
 
 export const verifyStudyPassword = async (req, res, next) => {
   try {
-    const { study_id } = req.params;
-    const { study_password } = req.body;
+    const { study_id } = req.validated.params;
+    const { study_password } = req.validated.body;
 
     // 서비스 계층에 검증 로직 위임
     const { token } = await studyService.verifyPasswordService(
@@ -51,7 +51,7 @@ export const verifyToken = (req, res, next) => {
 
 export const getStudy = async (req, res, next) => {
   try {
-    const studyId = req.params.study_id;
+    const studyId = req.validated.params.study_id;
     const study = await studyService.getStudyService(studyId);
     res.status(HTTP_STATUS.OK).json({
       success: true,

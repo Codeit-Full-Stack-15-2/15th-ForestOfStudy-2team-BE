@@ -1,6 +1,9 @@
 import * as studyController from '#src/controllers/study.controller.js';
 import { verifyAccessToken } from '#src/middlewares/auth.middleware.js';
-import { validate } from '#src/middlewares/validate.middleware.js';
+import {
+  validateBody,
+  validateParams,
+} from '#src/middlewares/validate.middleware.js';
 import {
   createStudySchema,
   studyIdSchema,
@@ -11,28 +14,33 @@ export const studyRoute = Router();
 
 studyRoute.get('/', studyController.getStudies); // 스터디 리스트 조회
 
-studyRoute.post('/', validate(createStudySchema), studyController.createStudy); // 스터디 만들기
+studyRoute.post(
+  '/',
+  validateBody(createStudySchema),
+  studyController.createStudy,
+); // 스터디 만들기
 
 studyRoute.get(
   '/:study_id',
-  validate(studyIdSchema, 'params'),
+  validateParams(studyIdSchema),
   studyController.getStudy,
 ); // 스터디 개별 조회
 
 studyRoute.get('/verify', verifyAccessToken, studyController.verifyToken);
 studyRoute.post(
   '/:study_id/verify',
-  validate(verifyPasswordSchema),
+  validateParams(studyIdSchema),
+  validateBody(verifyPasswordSchema),
   studyController.verifyStudyPassword,
 ); // 스터디 비밀번호 검증
 studyRoute.patch(
   '/:study_id',
-  validate(studyIdSchema, 'params'),
+  validateParams(studyIdSchema),
   studyController.updateStudy,
 ); // 스터디 수정
 studyRoute.delete(
   '/:study_id',
-  validate(studyIdSchema, 'params'),
+  validateParams(studyIdSchema),
   studyController.deleteStudy,
 ); // 스터디 삭제
 

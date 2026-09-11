@@ -1,13 +1,13 @@
+import { UnauthorizedException } from '#src/errors/unauthorized-exception.js';
 import jwt from 'jsonwebtoken';
+import { ERROR_MESSAGES } from '../constants/index.js';
 
 export const verifyAccessToken = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      const error = new Error('인증 토큰이 존재하지 않거나 잘못되었습니다.');
-      error.statusCode = 401;
-      throw error;
+      throw new UnauthorizedException(ERROR_MESSAGES.TOKEN_MISSING);
     }
 
     const token = authHeader.split(' ')[1];
@@ -18,8 +18,10 @@ export const verifyAccessToken = (req, res, next) => {
 
     next();
   } catch (error) {
-    error.statusCode = 401;
-    error.message = '유효하지 않거나 만료된 토큰입니다.';
-    next(error);
+    if (error instanceof UnauthorizedException) {
+      return next(error);
+    }
+
+    next(new UnauthorizedException(ERROR_MESSAGES.TOKEN_INVALID));
   }
 };
