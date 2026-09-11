@@ -12,6 +12,7 @@ export const errorHandler = (error, _req, res, _next) => {
   }
 
   if (error instanceof HttpException) {
+    // TODO: isDevelopment 일 때 에러 메시지 자세히
     return res.status(error.statusCode).json({
       success: false,
       message: error.message,
@@ -24,6 +25,7 @@ export const errorHandler = (error, _req, res, _next) => {
   };
 
   if (isDevelopment) {
+    // TODO: result.errors 개선
     result.details = {
       name: error.name,
       message: error.message,

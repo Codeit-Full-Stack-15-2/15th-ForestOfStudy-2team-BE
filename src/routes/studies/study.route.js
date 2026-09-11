@@ -10,18 +10,21 @@ import { Router } from 'express';
 export const studyRoute = Router();
 
 studyRoute.get('/', studyController.getStudies); // 스터디 리스트 조회
+
 studyRoute.post('/', validate(createStudySchema), studyController.createStudy); // 스터디 만들기
+
 studyRoute.get(
   '/:study_id',
   validate(studyIdSchema, 'params'),
   studyController.getStudy,
 ); // 스터디 개별 조회
+
 studyRoute.get('/verify', verifyAccessToken, studyController.verifyToken);
 studyRoute.post(
   '/:study_id/verify',
   validate(verifyPasswordSchema),
   studyController.verifyStudyPassword,
-);
+); // 스터디 비밀번호 검증
 studyRoute.patch(
   '/:study_id',
   validate(studyIdSchema, 'params'),
