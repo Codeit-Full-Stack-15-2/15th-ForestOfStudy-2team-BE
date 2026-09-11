@@ -17,7 +17,7 @@ if (isDevelopment) {
 app.use('/api', router);
 app.use(errorHandler);
 
-// export default app;
+// 수정전: export default app;
 export default function handler(req, res) {
   return app(req, res);
 }
