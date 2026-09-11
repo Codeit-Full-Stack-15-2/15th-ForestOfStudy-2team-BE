@@ -1,12 +1,12 @@
 // Study, StudyReaction, StudyRecord
 model Study {
-  id            Int    @id @default(autoincrement())
-  nickname      String @db.VarChar(255)
-  title         String @db.VarChar(255)
-  description   String @db.Text
-  background    String @db.VarChar(255)
-  studyPassword String @map("study_password") @db.VarChar(255)
-  point         Int    @default(0)
+  id            Int     @id @default(autoincrement())
+  nickname      String  @db.VarChar(255)
+  title         String  @db.VarChar(255)
+  description   String? @db.Text
+  background    String  @db.VarChar(255)
+  studyPassword String  @map("study_password") @db.VarChar(255)
+  point         Int     @default(0)
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
