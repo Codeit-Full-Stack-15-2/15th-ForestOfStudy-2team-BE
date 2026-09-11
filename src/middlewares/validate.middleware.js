@@ -6,12 +6,8 @@ const createValidator = (target) => (schema) => {
     const result = schema.safeParse(dataToValidate);
 
     if (!result.success) {
-      const flattened = result.error.flatten();
-      const firstField = Object.keys(flattened.fieldErrors)[0];
-      const errorMessage = firstField
-        ? flattened.fieldErrors[firstField][0]
-        : flattened.formErrors[0] || '잘못된 요청 데이터입니다.';
-
+      const errorMessage =
+        result.error.issues[0]?.message || '잘못된 요청 데이터입니다.';
       return next(new BadRequestException(errorMessage));
     }
 
