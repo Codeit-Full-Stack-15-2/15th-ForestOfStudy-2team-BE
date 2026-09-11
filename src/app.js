@@ -15,6 +15,9 @@ if (isDevelopment) {
 }
 
 app.use('/api', router);
+
+app.get('/', (req, res) => res.send('API Server is successfully running!'));
+
 app.use(errorHandler);
 
 // 수정전: export default app;
