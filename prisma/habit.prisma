@@ -20,10 +20,7 @@ model HabitRecord {
   id         Int      @id @default(autoincrement())
   habitId    Int      @map("habit_id")
   recordDate DateTime @map("record_date") @db.Date
-
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  isComplete Boolean @default(false)
 
   habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
 

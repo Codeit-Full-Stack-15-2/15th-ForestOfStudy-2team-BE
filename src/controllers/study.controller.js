@@ -56,7 +56,7 @@ export const getStudy = async (req, res, next) => {
     res.status(HTTP_STATUS.OK).json({
       success: true,
       data: study,
-      messgae: '스터디 정보 조회에 성공했습니다.',
+      message: '스터디 정보 조회에 성공했습니다.',
     });
   } catch (error) {
     next(error);
