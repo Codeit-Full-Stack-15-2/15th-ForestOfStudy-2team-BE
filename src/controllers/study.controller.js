@@ -78,4 +78,6 @@ export const deleteStudy = async (req, res, next) => {
   }
 };
 
+export const createReaction = async (req, res, next) => {};
+
 export const updatePoints = (req, res, next) => {};
