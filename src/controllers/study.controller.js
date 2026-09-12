@@ -68,6 +68,7 @@ export const deleteStudy = async (req, res, next) => {
   try {
     const studyId = req.validated.params.study_id;
     const study = await studyService.deleteStudyService(studyId);
+    
     res.status(HTTP_STATUS.OK).json({
       success: true,
       data: study,

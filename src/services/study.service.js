@@ -93,4 +93,23 @@ export const handleReactionToggleService = async (studyId, body) => {
   return { action: 'created', reaction: created };
 };
 
-export const deleteStudyService = async () => {};
+export const deleteStudyService = async (studyId) => {
+  const study = await studyRepository.findActiveStudyOnly(studyId);
+
+  if (!study) {
+    throw new NotFoundException('존재하지 않거나 이미 삭제된 스터디입니다.');
+  }
+
+  const softDeleted = await studyRepository.updateStudyDeletedAt(studyId);
+
+  return {
+    id: softDeleted.id,
+    nickname: softDeleted.nickname,
+    title: softDeleted.title,
+    description: softDeleted.description,
+    background: softDeleted.background,
+    point: softDeleted.point,
+    createdAt: softDeleted.createdAt,
+    reactions: softDeleted.reactions,
+  };
+};
