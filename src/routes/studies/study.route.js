@@ -5,6 +5,7 @@ import {
   validateParams,
 } from '#src/middlewares/validate.middleware.js';
 import {
+  createReactionSchema,
   createStudySchema,
   studyIdSchema,
   verifyPasswordSchema,
@@ -46,7 +47,12 @@ studyRoute.delete(
 
 // 스터디 종속 서브 리소스
 // studyRoute.post('/:study_id/focus_logs', createFocusLog); // 집중 로그 만들기
-studyRoute.post('/:study_id/reactions', studyController.createReaction); // 이모지 추가
+studyRoute.post(
+  '/:study_id/reactions',
+  validateParams(studyIdSchema),
+  validateBody(createReactionSchema),
+  studyController.createReaction,
+); // 이모지 추가
 studyRoute.delete(
   '/:study_id/reactions/:guest_uuid',
   studyController.deleteReaction,
