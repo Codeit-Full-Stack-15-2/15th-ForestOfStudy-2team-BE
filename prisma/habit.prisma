@@ -1,31 +1,25 @@
-// Habit, HabitRecord
 model Habit {
-  id      Int    @id @default(autoincrement())
-  studyId Int    @map("study_id")
-  title   String @db.VarChar(255)
-
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  study Study @relation(fields: [studyId], references: [id], onDelete: Cascade)
-
-  records HabitRecord[]
+  id        Int           @id @default(autoincrement())
+  studyId   Int           @map("study_id")
+  title     String        @db.VarChar(255)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+  deletedAt DateTime?     @map("deleted_at")
+  records   HabitRecord[]
+  study     Study         @relation(fields: [studyId], references: [id], onDelete: Cascade)
 
   @@index([studyId])
   @@map("habits")
 }
 
 model HabitRecord {
-  id         Int      @id @default(autoincrement())
-  habitId    Int      @map("habit_id")
-  recordDate DateTime @map("record_date") @db.Date
-
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  id         Int       @id @default(autoincrement())
+  habitId    Int       @map("habit_id")
+  recordDate DateTime  @map("record_date") @db.Date
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+  habit      Habit     @relation(fields: [habitId], references: [id], onDelete: Cascade)
 
   @@unique([habitId, recordDate])
   @@map("habit_records")

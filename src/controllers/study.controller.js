@@ -63,7 +63,37 @@ export const getStudy = async (req, res, next) => {
   }
 };
 export const updateStudy = (req, res, next) => {};
-export const deleteStudy = (req, res, next) => {};
-export const createReaction = (req, res, next) => {};
-export const deleteReaction = (req, res, next) => {};
+
+export const deleteStudy = async (req, res, next) => {
+  try {
+    const studyId = req.validated.params.study_id;
+    const study = await studyService.deleteStudyService(studyId);
+    
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      data: study,
+      message: '스터디 삭제에 성공했습니다.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createReaction = async (req, res, next) => {
+  try {
+    const studyId = req.validated.params.study_id;
+    const body = req.validated.body;
+    const reaction = await studyService.handleReactionToggleService(
+      studyId,
+      body,
+    );
+    res.status(HTTP_STATUS.CREATE).json({
+      success: true,
+      data: reaction,
+      message: '리액션이 생성되었습니다.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 export const updatePoints = (req, res, next) => {};
