@@ -81,5 +81,4 @@ export const createReaction = async (req, res, next) => {
     next(error);
   }
 };
-export const deleteReaction = (req, res, next) => {};
 export const updatePoints = (req, res, next) => {};

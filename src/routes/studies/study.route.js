@@ -53,8 +53,5 @@ studyRoute.post(
   validateBody(createReactionSchema),
   studyController.createReaction,
 ); // 이모지 추가
-studyRoute.delete(
-  '/:study_id/reactions/:guest_uuid',
-  studyController.deleteReaction,
-); // 이모지 삭제하기
+
 studyRoute.patch('/:study_id/points', studyController.updatePoints); // 포인트 수정
