@@ -51,3 +51,17 @@ export const getStudyService = async (studyId) => {
     reactions: [],
   };
 };
+
+export const deleteStudyService = async (studyId) => {
+  const study = await studyRepository.softDeleteStudy(studyId);
+  return {
+    id: study.id,
+    nickname: study.nickname,
+    title: study.title,
+    description: study.description,
+    background: study.background,
+    point: study.point,
+    createdAt: study.createdAt,
+    reactions: [],
+  };
+};
