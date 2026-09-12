@@ -1,0 +1,21 @@
+/api/health:
+  get:
+    summary: 서버 상태 확인
+    description: 서버가 정상적으로 동작하는지 체크하는 헬스체크 엔드포인트
+    tags:
+      - Health
+    responses:
+      200:
+        description: 서버 정상 동작
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  format: date-time
+                  example: '2026-09-11T10:00:00.000Z'
