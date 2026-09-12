@@ -10,7 +10,6 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prisma:generate": "dotenv -e ./env/.env.development -- npx prisma generate --schema=prisma",
-    "postinstall": "prisma generate --schema=prisma",
     "prisma:migrate": "dotenv -e ./env/.env.development -- npx prisma migrate dev",
     "prisma:studio": "dotenv -e ./env/.env.development -- npx prisma studio"
   },
