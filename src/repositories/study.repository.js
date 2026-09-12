@@ -16,37 +16,79 @@ export const createStudyRecord = async (data) => {
 export const findStudyById = async (studyId) => {
   const numericId = Number(studyId);
 
-  const [study, reactionGroups] = await Promise.all([
+  const [study, reactionRecords] = await Promise.all([
     prisma.study.findFirst({
       where: {
         id: numericId,
         deletedAt: null,
       },
     }),
-    prisma.studyReaction.groupBy({
-      by: ['emoji'],
+    prisma.studyReaction.findMany({
       where: {
         studyId: numericId,
         deletedAt: null,
       },
-      _count: {
+      select: {
         emoji: true,
+        guestUuid: true,
       },
     }),
   ]);
 
   if (!study) return null;
 
-  const reactions = reactionGroups.map((group) => ({
-    emoji: group.emoji,
-    totalCount: group._count.emoji,
-  }));
-  console.log({
-    ...study,
-    reactions,
-  });
+  const reactionMap = reactionRecords.reduce((acc, record) => {
+    const { emoji, guestUuid } = record;
+
+    if (!acc[emoji]) {
+      acc[emoji] = {
+        emoji,
+        totalCount: 0,
+        guestUuids: [],
+      };
+    }
+
+    acc[emoji].totalCount += 1;
+    acc[emoji].guestUuids.push(guestUuid);
+
+    return acc;
+  }, {});
+
+  const reactions = Object.values(reactionMap);
+
   return {
     ...study,
     reactions,
   };
+};
+
+export const createReaction = async (data) => {
+  const reaction = await prisma.studyReaction.create({
+    data: {
+      studyId: Number(data.studyId),
+      emoji: data.emoji,
+      guestUuid: data.guestUuid,
+    },
+  });
+  return reaction;
+};
+
+export const findActiveReaction = async ({ studyId, emoji, guestUuid }) => {
+  const reaction = prisma.studyReaction.findFirst({
+    where: {
+      studyId,
+      emoji,
+      guestUuid,
+      deletedAt: null,
+    },
+  });
+  return reaction;
+};
+
+export const softDeleteReaction = async (reactionId) => {
+  const reaction = prisma.studyReaction.update({
+    where: { id: reactionId },
+    data: { deletedAt: new Date() },
+  });
+  return reaction;
 };
