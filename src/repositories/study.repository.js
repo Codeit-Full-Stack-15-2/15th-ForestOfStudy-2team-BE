@@ -99,7 +99,7 @@ export const findActiveStudyOnly = async (studyId) => {
       id: Number(studyId),
       deletedAt: null,
     },
-    select: { id: true }, // 불필요한 본문 컬럼 및 리액션 조회 배제
+    select: { id: true },
   });
 };
 
