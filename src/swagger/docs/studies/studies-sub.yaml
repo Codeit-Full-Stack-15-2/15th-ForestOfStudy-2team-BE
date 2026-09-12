@@ -121,10 +121,10 @@
             required:
               - point
             properties:
-              point:
+              minutes:
                 type: integer
-                description: 포인트 값
-                example: 10
+                description: 집중 완료한 시간(분)
+                example: 25
     responses:
       200:
         description: 포인트 수정 성공
@@ -141,7 +141,7 @@
                         add_point:
                           type: integer
                           description: point 증가값
-                          example: 123
+                          example: 3
                         prev_point:
                           type: integer
                           description: 이전 point 값
@@ -149,7 +149,7 @@
                         total_point:
                           type: integer
                           description: 전체 point 값
-                          example: 789
+                          example: 459
                     message:
                       type: string
                       example: 포인트 수정 성공
