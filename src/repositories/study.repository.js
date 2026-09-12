@@ -41,10 +41,6 @@ export const findStudyById = async (studyId) => {
     emoji: group.emoji,
     totalCount: group._count.emoji,
   }));
-  console.log({
-    ...study,
-    reactions,
-  });
   return {
     ...study,
     reactions,
