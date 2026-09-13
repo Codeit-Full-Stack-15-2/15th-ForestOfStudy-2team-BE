@@ -125,7 +125,7 @@ const findStudyWithPoint = async (studyId) => {
 export const addPointService = async (studyId, minutes) => {
   const study = await findStudyWithPoint(studyId);
 
-  const addPoint = 3 * Math.floor(minutes / 10);
+  const addPoint = 3 + Math.floor(minutes / 10);
   const prevPoint = study.point;
   const totalPoint = prevPoint + addPoint;
 
