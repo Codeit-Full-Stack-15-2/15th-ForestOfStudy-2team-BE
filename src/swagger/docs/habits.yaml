@@ -1,0 +1,232 @@
+# habits.yaml
+
+/studies/{study_id}/habits:
+  get:
+    summary: 오늘의 습관 리스트 조회
+    description: study id를 사용하여 습관을 조회합니다
+    tags:
+      - Studies
+    parameters:
+      - in: path
+        name: study_id
+        required: true
+        schema:
+          type: integer
+        description: 스터디 id
+      - in: query
+        name: orderBy
+        schema:
+          type: string
+          enum: [latest, oldest]
+        description: 정렬 기준
+    responses:
+      200:
+        description: 습관 리스트 조회 성공
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/SuccessResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            description: 습관 id
+                            example: 123
+                          study_id:
+                            type: integer
+                            description: 스터디 id
+                            example: 456
+                          title:
+                            type: string
+                            description: 습관 이름
+                            example: 습관
+      400:
+        description: 습관 리스트 조회 실패
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+
+  post:
+    summary: 오늘의 습관 만들기
+    description: 오늘의 습관을 추가합니다.
+    tags:
+      - Studies
+    parameters:
+      - in: path
+        name: study_id
+        required: true
+        schema:
+          type: integer
+        description: 스터디 id
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - title
+            properties:
+              title:
+                type: string
+                description: 습관 이름
+                example: 습관
+    responses:
+      200:
+        description: 습관 생성 성공
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/SuccessResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: integer
+                      description: 생성된 습관 id
+                      example: 123
+                    message:
+                      type: string
+                      example: 습관 생성 성공
+      400:
+        description: 습관 생성 실패 (또는 습관 이름 중복)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+            examples:
+              생성실패:
+                value:
+                  success: false
+                  message: 습관 생성 실패
+              이름중복:
+                value:
+                  success: false
+                  message: 습관 이름 중복
+
+/studies/{study_id}/habits/{habit_id}:
+  patch:
+    summary: 오늘의 습관 수정
+    description: 오늘의 습관을 수정합니다.
+    tags:
+      - Studies
+    parameters:
+      - in: path
+        name: study_id
+        required: true
+        schema:
+          type: integer
+        description: 스터디 id
+      - in: path
+        name: habit_id
+        required: true
+        schema:
+          type: integer
+        description: 수정할 습관 id
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - title
+            properties:
+              title:
+                type: string
+                description: 습관 이름
+                example: 습관
+    responses:
+      200:
+        description: 습관 수정 성공
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/SuccessResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: 습관 id
+                          example: 123
+                        study_id:
+                          type: integer
+                          description: 스터디 id
+                          example: 456
+                        title:
+                          type: string
+                          description: 습관 이름
+                          example: 습관
+                    message:
+                      type: string
+                      example: 습관 수정 성공
+      400:
+        description: 습관 수정 실패
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+
+  delete:
+    summary: 오늘의 습관 삭제
+    description: 오늘의 습관을 삭제합니다
+    tags:
+      - Studies
+    parameters:
+      - in: path
+        name: study_id
+        required: true
+        schema:
+          type: integer
+        description: 스터디 id
+      - in: path
+        name: habit_id
+        required: true
+        schema:
+          type: integer
+        description: 삭제할 습관 id
+    responses:
+      200:
+        description: 습관 삭제 성공
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/SuccessResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: 습관 id
+                          example: 123
+                        study_id:
+                          type: integer
+                          description: 스터디 id
+                          example: 456
+                        title:
+                          type: string
+                          description: 습관 이름
+                          example: 습관
+                    message:
+                      type: string
+                      example: 습관 삭제 성공
+      400:
+        description: 습관 삭제 실패
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'

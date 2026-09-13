@@ -37,9 +37,21 @@ export const verifyPasswordSchema = z.object({
 export const studyIdSchema = z.object({
   study_id: z.coerce
     .number({
-      required_error: '스터디 아이디는 숫자여야 합니다.',
+      required_error: '스터디 아이디는 필수 입력값입니다.',
     })
     .int({
       message: '스터디 아이디는 정수여야 합니다.',
-    }),
+    })
+    .positive('스터디 아이디는 양수여야 합니다.'),
+});
+
+export const createReactionSchema = z.object({
+  emoji: z
+    .string({ required_error: '이모지는 필수 입력값입니다.' })
+    .min(1, '이모지는 최소 1자 이상이어야 합니다.')
+    .max(50, '이모지는 최대 50자까지 허용됩니다.'),
+  guest_uuid: z
+    .string({ required_error: 'guestUuid는 필수 입력값입니다.' })
+    .uuid({ message: '올바른 UUID 형식이 아닙니다.' })
+    .nullish(),
 });
