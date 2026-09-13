@@ -62,7 +62,7 @@ export const getStudy = async (req, res, next) => {
   }
 };
 
-export const updatePoints = async(req, res)=>{
+export const updatePoints = async (req, res) => {
   const study_id = req.validated.params.study_id;
   const minutes = req.validated.body.minutes;
   const result = await studyService.addPointService(study_id, minutes);
@@ -71,8 +71,8 @@ export const updatePoints = async(req, res)=>{
     success: true,
     data: result,
     message: '포인트 수정 성공',
-  })
-}
+  });
+};
 
 export const updateStudy = (req, res, next) => {};
 
@@ -93,7 +93,7 @@ export const deleteStudy = async (req, res, next) => {
 
 export const createReaction = async (req, res, next) => {
   try {
-    
+    const studyId = req.validated.params.study_id;
     const body = req.validated.body;
     const reaction = await studyService.handleReactionToggleService(
       studyId,
@@ -107,5 +107,4 @@ export const createReaction = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-
 };
