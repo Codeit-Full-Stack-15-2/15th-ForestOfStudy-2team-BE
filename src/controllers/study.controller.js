@@ -62,8 +62,12 @@ export const getStudy = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updatePoints = async(req, res, next)=>{
+  const study_id = req.validated.params.study_id;
+}
 export const updateStudy = (req, res, next) => {};
 export const deleteStudy = (req, res, next) => {};
 export const createReaction = (req, res, next) => {};
 export const deleteReaction = (req, res, next) => {};
-export const updatePoints = (req, res, next) => {};
+
