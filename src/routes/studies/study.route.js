@@ -28,12 +28,14 @@ studyRoute.get(
 ); // 스터디 개별 조회
 
 studyRoute.get('/verify', verifyAccessToken, studyController.verifyToken);
+
 studyRoute.post(
   '/:study_id/verify',
   validateParams(studyIdSchema),
   validateBody(verifyPasswordSchema),
   studyController.verifyStudyPassword,
 ); // 스터디 비밀번호 검증
+
 studyRoute.patch(
   '/:study_id',
   validateParams(studyIdSchema),

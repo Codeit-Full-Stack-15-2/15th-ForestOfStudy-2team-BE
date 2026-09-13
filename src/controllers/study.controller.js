@@ -20,8 +20,6 @@ export const verifyStudyPassword = async (req, res, next) => {
   try {
     const { study_id } = req.validated.params;
     const { study_password } = req.validated.body;
-
-    // 서비스 계층에 검증 로직 위임
     const { token } = await studyService.verifyPasswordService(
       study_id,
       study_password,
@@ -68,7 +66,7 @@ export const deleteStudy = async (req, res, next) => {
   try {
     const studyId = req.validated.params.study_id;
     const study = await studyService.deleteStudyService(studyId);
-    
+
     res.status(HTTP_STATUS.OK).json({
       success: true,
       data: study,
