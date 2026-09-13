@@ -3,17 +3,23 @@ import { verifyAccessToken } from '#src/middlewares/auth.middleware.js';
 import {
   validateBody,
   validateParams,
+  validateQuery,
 } from '#src/middlewares/validate.middleware.js';
 import {
   createReactionSchema,
   createStudySchema,
+  getStudiesQuerySchema,
   studyIdSchema,
   verifyPasswordSchema,
 } from '#src/validations/study.validate.js';
 import { Router } from 'express';
 export const studyRoute = Router();
 
-studyRoute.get('/', studyController.getStudies); // 스터디 리스트 조회
+studyRoute.get(
+  '/',
+  validateQuery(getStudiesQuerySchema),
+  studyController.getStudies,
+); // 스터디 리스트 조회
 
 studyRoute.post(
   '/',
