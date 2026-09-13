@@ -3,49 +3,75 @@ import * as studyService from '#src/services/study.service.js';
 import { HTTP_STATUS } from '../constants';
 
 export const getHabits = async (req, res, next) => {
-  const studyId = req.validate.params.study_id;
+  try {
+    const { studyId } = req.validated.params;
+    const { date } = req.validated.params || req.query;
 
-  const habits = await habitService.getHabitsService(req.validate.params);
-  res.status(HTTP_STATUS.OK).json({
+    const habits = await habitService.getHabitsService(studyId, date);
+  
+    res.status(HTTP_STATUS.OK).json({
     success: true,
     data: habits,
-    message: '습관 목록을 가져오는데 성공했습니다.'
-
-  })
+    message: '습관 목록을 가져오는데 성공했습니다.',
+  });}
+  catch (error) {
+    next(error);
+  }
 };
 
 export const createHabits = async (req, res, next) => {
- const {study_id} = req.params;
- const {titles} = req.validate.body;
- 
-  const newHabit = await habitService.createHabitsService(req.validate.body);
+  try {
+  
+  const { study_id } = req.validated.params;
+  const { titles } = req.validated.body;
+
+ const newHabit = await habitService.createHabitsService(study_id, titles);
   res.status(HTTP_STATUS.CREATE).json({
     success: true,
     data: newHabit,
     message: '습관이 생성되었습니다.',
-  });
+  });}
+  catch (error) {
+    next(error);
+  }
 };
 
 export const updateHabits = async (req, res, next) => {
- try{
-const {study_id} = req.validated.params;
-const {habits} = req.validated.body;
+  try {
+    const { study_id } = req.validated.params;
+    const { habits } = req.validated.body;
 
-  const updateHabits = await habitService.updateHabitsService(
-    study_id,
-    habits,
-  );
-  
-  res.status(HTTP_STATUS.OK).json({
-    success: true,
-    data: updateHabits,
-    message: '습관을 성공적으로 수정했습니다.'
-  });
- } catch (error){
-  next(error);
- }
-  
+    const updateHabits = await habitService.updateHabitsService(
+      study_id,
+      habits,
+    );
+
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      data: updateHabits,
+      message: '습관을 성공적으로 수정했습니다.',
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
+export const deleteHabits = async (req, res, next) => {
+  try {
+    const { study_id } = req.validated.params ;
+    const { habitIds } = req.validated.body ;
 
-export const deleteHabits = (req, res, next) => {};
+    const result = await habitService.deleteHabitsService(
+      study_id,
+      habitIds,
+    );
+
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      data: result,
+      message: '습관을 성공적으로 삭제했습니다.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};

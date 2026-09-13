@@ -30,6 +30,15 @@ export const findHabits = async (studyId, startDate, endDate) => {
   });
 };
 
+export const findHabitsByIds = async(habitIds) => {
+  return await prisma.habit.findMany({
+    where: {
+      id: {in: habitIds.map((id) => BigInt(id))},
+      deletedAt: null,
+    },
+  });
+};
+
 export const updateHabits = async (habitsData) => {
   const updatePromises = habitsData.map((habit) => {
     return prisma.habit.updateMany({
