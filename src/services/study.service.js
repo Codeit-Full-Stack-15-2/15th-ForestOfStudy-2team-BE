@@ -56,14 +56,12 @@ export const handleReactionToggleService = async (studyId, body) => {
   const numericStudyId = Number(studyId);
   const { emoji, guest_uuid } = body;
 
-  // 1. guest_uuid는 프론트엔드에서 이모지를 누를 때 생성
   const existingReaction = await studyRepository.findActiveReaction({
     studyId: numericStudyId,
     emoji,
     guestUuid: guest_uuid,
   });
 
-  // 2. 이미 누른 이모지라면 취소 처리 (규칙 2)
   if (existingReaction) {
     const softDeleted = await studyRepository.softDeleteReaction(
       existingReaction.id,
