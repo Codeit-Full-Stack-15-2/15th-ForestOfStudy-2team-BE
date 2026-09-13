@@ -13,6 +13,23 @@ export const createStudyRecord = async (data) => {
   });
 };
 
+export const findStudies = async () => {
+  return await prisma.study.findMany({
+    where: {
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      nickname: true,
+      title: true,
+      description: true,
+      background: true,
+      point: true,
+      createdAt: true,
+    },
+  });
+};
+
 export const findStudyById = async (studyId) => {
   const numericId = Number(studyId);
 

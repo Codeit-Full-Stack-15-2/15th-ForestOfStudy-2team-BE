@@ -1,7 +1,21 @@
 import * as studyService from '#src/services/study.service.js';
 import { HTTP_STATUS } from '../constants/index.js';
 
-export const getStudies = (req, res, next) => {};
+export const getStudies = async (req, res, next) => {
+  try {
+    const studies = await studyService.getStudiesService();
+
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      data: {
+        list: studies,
+      },
+      message: "스터디 목록 조회에 성공했습니다."
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const createStudy = async (req, res, next) => {
   try {
