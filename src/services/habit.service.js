@@ -4,13 +4,13 @@ import * as habitRepository from '#src/repositories/habit.repository.js';
 import * as studyRepository from '#src/repositories/study.repository.js';
 import { BadRequestException } from '#src/errors/bad-request-exception.js';
 
-export const createHabitService = async (studyId, title) => {
+export const createHabitsService = async (studyId, titles) => {
   const study = await studyRepository.findStudyById(studyId);
   if (!study) {
     throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
   }
 
-  const newHabit = await habitRepository.createHabit(studyId, title);
+  const newHabit = await habitRepository.createHabit(studyId, titles);
   return newHabit;
 };
 

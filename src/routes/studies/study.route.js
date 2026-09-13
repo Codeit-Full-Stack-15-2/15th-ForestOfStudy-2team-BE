@@ -9,8 +9,11 @@ import {
   studyIdSchema,
   verifyPasswordSchema,
 } from '#src/validations/study.validate.js';
+import  habitRoute  from '../habits/habit.route.js';
 import { Router } from 'express';
 export const studyRoute = Router();
+
+studyRoute.use('/:study_id/habits', habitRoute);
 
 studyRoute.get('/', studyController.getStudies); // 스터디 리스트 조회
 

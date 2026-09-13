@@ -9,4 +9,3 @@ router.get('/health', (req, res) => {
 });
 
 router.use('/studies', studyRoute);
-router.use('/habits', habitRoute);
