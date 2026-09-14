@@ -2,7 +2,7 @@ import * as habitService from '#src/services/habit.service.js';
 import * as studyService from '#src/services/study.service.js';
 import { HTTP_STATUS } from '#src/constants/http-status.js';
 
-export const getHabits = async (req, res, next) => {
+export const getHabits = async (req, res) => {
   const { studyId } = req.validated.params;
   const { date } = req.validated.params || req.query;
 
@@ -15,7 +15,7 @@ export const getHabits = async (req, res, next) => {
   });
 };
 
-export const createHabits = async (req, res, next) => {
+export const createHabits = async (req, res) => {
   const { study_id } = req.validated.params;
   const { titles } = req.validated.body;
 
@@ -27,7 +27,7 @@ export const createHabits = async (req, res, next) => {
   });
 };
 
-export const updateHabits = async (req, res, next) => {
+export const updateHabits = async (req, res) => {
   const { study_id } = req.validated.params;
   const { habits } = req.validated.body;
 
@@ -40,7 +40,7 @@ export const updateHabits = async (req, res, next) => {
   });
 };
 
-export const deleteHabits = async (req, res, next) => {
+export const deleteHabits = async (req, res) => {
   const { study_id } = req.validated.params;
   const { habitIds } = req.validated.body;
 
