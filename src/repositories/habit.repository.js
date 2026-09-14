@@ -84,48 +84,61 @@ export const findHabitsWithRecordsByStudyIdAndDateRange = async (
   studyId,
   startDate,
   endDate,
+  page = 1,
+  pageSize = 7,
 ) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
+  const skip = (Number(page) - 1) * Number(pageSize);
+  const take = Number(pageSize);
 
-  const habitRecords = await prisma.habit.findMany({
-    where: {
-      studyId: Number(studyId),
-      OR: [
-        {
-          deletedAt: null,
-        },
-        {
-          records: {
-            some: {
-              deletedAt: null,
-              recordDate: {
-                gte: start,
-                lte: end,
-              },
+  const whereCondition = {
+    studyId: Number(studyId),
+    OR: [
+      {
+        deletedAt: null,
+      },
+      {
+        records: {
+          some: {
+            deletedAt: null,
+            recordDate: {
+              gte: start,
+              lte: end,
             },
           },
         },
-      ],
-    },
-    include: {
-      records: {
-        where: {
-          deletedAt: null,
-          recordDate: {
-            gte: start,
-            lte: end,
+      },
+    ],
+  };
+
+  const [totalCount, habitRecords] = await prisma.$transaction([
+    prisma.habit.count({
+      where: whereCondition,
+    }),
+    prisma.habit.findMany({
+      where: whereCondition,
+      include: {
+        records: {
+          where: {
+            deletedAt: null,
+            recordDate: {
+              gte: start,
+              lte: end,
+            },
+          },
+          orderBy: {
+            recordDate: 'asc',
           },
         },
-        orderBy: {
-          recordDate: 'asc',
-        },
       },
-    },
-    orderBy: {
-      id: 'asc',
-    },
-  });
+      skip,
+      take,
+      orderBy: {
+        id: 'asc',
+      },
+    }),
+  ]);
 
-  return habitRecords;
+  return { totalCount, habits: habitRecords };
 };

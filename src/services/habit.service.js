@@ -116,18 +116,20 @@ export const deleteHabitsService = async (studyId, habitIds) => {
   };
 };
 
-export const getWeeklyRecords = async (studyId, targetDate) => {
+export const getWeeklyRecords = async (studyId, targetDate, page, pageSize) => {
   const numericStudyId = Number(studyId);
   const base = dayjs.tz(targetDate);
 
   const startDate = base.startOf('isoWeek').format('YYYY-MM-DD');
   const endDate = base.endOf('isoWeek').format('YYYY-MM-DD');
 
-  const habits =
+  const { totalCount, habits } =
     await habitRepository.findHabitsWithRecordsByStudyIdAndDateRange(
       numericStudyId,
       startDate,
       endDate,
+      page,
+      pageSize,
     );
 
   const weekDays = Array.from({ length: 7 }, (_, i) =>
@@ -152,5 +154,8 @@ export const getWeeklyRecords = async (studyId, targetDate) => {
     };
   });
 
-  return formattedHabits;
+  return {
+    totalCount,
+    list: formattedHabits,
+  };
 };
