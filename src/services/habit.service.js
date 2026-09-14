@@ -1,8 +1,8 @@
+import { BadRequestException } from '#src/errors/bad-request-exception.js';
 import { NotFoundException } from '#src/errors/not-found-exception.js';
-import { ERROR_MESSAGES } from '../constants/index.js';
 import * as habitRepository from '#src/repositories/habit.repository.js';
 import * as studyRepository from '#src/repositories/study.repository.js';
-import { BadRequestException } from '#src/errors/bad-request-exception.js';
+import { ERROR_MESSAGES } from '../constants/index.js';
 
 export const createHabitsService = async (studyId, titles) => {
   const study = await studyRepository.findStudyById(studyId);
@@ -115,4 +115,17 @@ export const deleteHabitsService = async (studyId, habitIds) => {
   return {
     deletedCount: result.count,
   };
+};
+
+export const getWeeklyRecords = async (studyId, targetDate) => {
+  const numericStudyId = Number(studyId);
+
+  const weeklyHabitRecords =
+    await habitRepository.findHabitsWithRecordsByStudyIdAndDateRange(
+      numericStudyId,
+      start,
+      end,
+    );
+
+  return weeklyHabitRecords;
 };
