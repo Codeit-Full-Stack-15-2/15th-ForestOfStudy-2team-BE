@@ -32,11 +32,11 @@ studyRoute.post(
 
 studyRoute.get('/verify', verifyAccessToken, studyController.verifyToken);
 
-// studyRoute.get(
-//   '/records/weekly',
-//   validateQuery(getWeeklyHabitRecordsQuerySchema),
-//   habitController.getWeeklyHabitRecords,
-// ); // 주단위 습관 기록 조회
+studyRoute.get(
+  '/records/weekly',
+  validateQuery(getWeeklyHabitRecordsQuerySchema),
+  habitController.getWeeklyHabitRecords,
+); // 주단위 습관 기록 조회
 
 studyRoute.get(
   '/:study_id',

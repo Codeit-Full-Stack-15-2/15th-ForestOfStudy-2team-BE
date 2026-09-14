@@ -52,20 +52,20 @@ export const deleteHabits = async (req, res) => {
   });
 };
 
-// export const getWeeklyHabitRecords = async (req, res, next) => {
-//   try {
-//     const studyId = req.validated.query.study_id;
-//     const targetDate = req.validated.query.start_date;
-//     const weeklyHabitRecords = await habitService.getWeeklyRecords(
-//       studyId,
-//       targetDate,
-//     );
-//     res.status(HTTP_STATUS.OK).json({
-//       success: true,
-//       data: weeklyHabitRecords,
-//       message: '스터디가 생성되었습니다.',
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+export const getWeeklyHabitRecords = async (req, res, next) => {
+  try {
+    const studyId = req.validated.query.study_id;
+    const targetDate = req.validated.query.start_date;
+    const weeklyHabitRecords = await habitService.getWeeklyRecords(
+      studyId,
+      targetDate,
+    );
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      data: weeklyHabitRecords,
+      message: '스터디가 생성되었습니다.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};

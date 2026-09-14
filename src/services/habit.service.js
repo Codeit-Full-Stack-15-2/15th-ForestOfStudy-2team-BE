@@ -1,5 +1,5 @@
 import { BadRequestException } from '#src/errors/bad-request-exception.js';
-import { NotFoundException } from'#src/errors/not-found-exception.js';
+import { NotFoundException } from '#src/errors/not-found-exception.js';
 import * as habitRepository from '#src/repositories/habit.repository.js';
 import * as studyRepository from '#src/repositories/study.repository.js';
 import { ERROR_MESSAGES } from '../constants/index.js';
@@ -15,14 +15,16 @@ export const createHabitsService = async (studyId, titles) => {
   const existingHabits = await prisma.habit.findMany({
     where: {
       studyId: Number(studyId),
-      title: { in: titles }, 
+      title: { in: titles },
     },
-    select: {title: true}
+    select: { title: true },
   });
 
-  if (existingHabits.length > 0){
+  if (existingHabits.length > 0) {
     const duplicatedTitles = existingHabits.map((h) => h.title).join(', ');
-    throw new ConflictException(ERROR_MESSAGES.HABIT_ALREADY_EXISTS(duplicatedTitles))
+    throw new ConflictException(
+      ERROR_MESSAGES.HABIT_ALREADY_EXISTS(duplicatedTitles),
+    );
   }
 
   const newHabits = await habitRepository.createHabit(Number(studyId), titles);
