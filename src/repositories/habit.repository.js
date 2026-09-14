@@ -4,7 +4,7 @@ export const createHabit = async (studyId, titles) => {
   const createPromises = titles.map((title) =>
     prisma.habit.create({
       data: {
-        studyId: BigInt(studyId),
+        studyId: Number(studyId),
         title: title,
       },
     }),
@@ -19,7 +19,7 @@ export const findHabits = async (studyId, startDate, endDate) => {
 
   return await prisma.habit.findMany({
     where: {
-      studyId: BigInt(studyId),
+      studyId: Number(studyId),
       deletedAt: null,
     },
     include: {
@@ -36,7 +36,7 @@ export const findHabits = async (studyId, startDate, endDate) => {
 export const findHabitsByIds = async (habitIds) => {
   return await prisma.habit.findMany({
     where: {
-      id: { in: habitIds.map((id) => BigInt(id)) },
+      id: { in: habitIds.map((id) => Number(id)) },
       deletedAt: null,
     },
   });
@@ -45,7 +45,7 @@ export const findHabitsByIds = async (habitIds) => {
 export const updateHabits = async (habitsData) => {
   const updatePromises = habitsData.map((habit) => {
     return prisma.habit.updateMany({
-      where: { id: BigInt(habit.id), deletedAt: null },
+      where: { id: Number(habit.id), deletedAt: null },
       data: {
         title: habit.title,
       },
@@ -57,8 +57,8 @@ export const updateHabits = async (habitsData) => {
 };
 
 export const removehabits = async (habitIds) => {
-  await prisma.habit.updateMany({
-    where: { id: { in: habitIds.map((id) => BigInt(id)) }, deletedAt: null },
+  return await prisma.habit.updateMany({
+    where: { id: { in: habitIds.map((id) => Number(id)) }, deletedAt: null },
     data: { deletedAt: new Date() },
   });
 };
@@ -67,13 +67,13 @@ export const upsertHabitRecord = async (habitId, recordDate, isComplete) => {
   return await prisma.habitRecord.upsert({
     where: {
       habitId_recordDate: {
-        habitId: BigInt(habitId),
+        habitId: Number(habitId),
         recordDate: new Date(recordDate),
       },
     },
     update: { isComplete },
     create: {
-      habitId: BigInt(habitId),
+      habitId: Number(habitId),
       recordDate: new Date(recordDate),
       isComplete,
     },

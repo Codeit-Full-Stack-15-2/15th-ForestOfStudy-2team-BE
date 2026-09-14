@@ -9,27 +9,33 @@
         schema:
           type: string
           enum: [latest, oldest, highPoints, lowPoints]
-        description: 정렬 기준
+          default: latest
+        description: 정렬 기준( 기본값 - latest)
       - in: query
         name: keyword
         schema:
           type: string
-        description: 검색 키워드
+        description: 검색 키워드(스터디 제목 or 닉네임 부분 일치 검색)
       - in: query
         name: pageSize
         schema:
           type: integer
+          default: 6
+          minimum: 1
+          maximum: 50
           example: 6
-        description: 페이지당 항목 수
+        description: 페이지당 항목 수(기본값 6, 최대 50)
       - in: query
         name: page
         schema:
           type: integer
+          default: 1
+          minimum: 1
           example: 1
-        description: 페이지 번호
+        description: 페이지 번호 (기본값 1)
     responses:
       200:
-        description: 스터디 정보 호출 성공
+        description: 스터디 목록 정보 호출 성공
         content:
           application/json:
             schema:
@@ -37,18 +43,34 @@
                 - $ref: '#/components/schemas/SuccessResponse'
                 - type: object
                   properties:
-                    data:
-                      type: object
-                      properties:
                         list:
                           type: array
                           items:
                             type: object
-                        totalCount:
-                          type: integer
-                          example: 123
+                            properties:
+                              study_id:
+                                type: integer
+                                example: 1
+                              nickname:
+                                type: string
+                                example: 연우
+                              title:
+                                type: string
+                                example: 개발공장
+                              description:
+                                type: string
+                                example: pika pika
+                              point:
+                                type: integer
+                                example: 30
+                              created_at:
+                                type: string
+                                format: date-time
+                                example: '2026-09-01T00:00:00.000Z'
+                        pageInfo:
+                          $ref: '#/components/schemas/PageInfo'
       400:
-        description: 스터디 정보 호출 실패
+        description: 스터디 목록 정보 호출 실패
         content:
           application/json:
             schema:

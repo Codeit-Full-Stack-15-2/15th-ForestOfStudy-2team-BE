@@ -17,6 +17,7 @@ components:
           example: false
         message:
           type: string
+          example: 잘못된 요청입니다.
     PageInfo:
       type: object
       properties:
