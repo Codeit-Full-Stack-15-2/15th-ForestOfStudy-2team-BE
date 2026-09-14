@@ -112,6 +112,22 @@ export const updateStudyDeletedAt = async (studyId) => {
   return study;
 };
 
+export const updateStudyRecord = async (studyId, updateData) => {
+  const numericId = Number(studyId);
+
+  return await prisma.study.update({
+    where: {
+      id: numericId,
+    },
+    data: {
+      nickname: updateData.nickname,
+      title: updateData.title,
+      description: updateData.description,
+      background: updateData.background,
+    },
+  });
+};
+
 export const findActiveStudyWithPoint = async (studyId) => {
   return prisma.study.findFirst({
     where: { id: Number(studyId), deletedAt: null },
