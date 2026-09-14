@@ -11,13 +11,12 @@ export const createHabitsService = async (studyId, titles) => {
   }
 
   const newHabits = await habitRepository.createHabit(studyId, titles);
-  
+
   return newHabits.map((habit) => ({
     ...habit,
     id: habit.id.toString(),
     studyId: habit.studyId.toString(),
   }));
-
 };
 
 export const getHabitsService = async (studyId, targetDate) => {
@@ -73,7 +72,7 @@ export const updateHabitsService = async (studyId, habitsData) => {
       '해당 스터디에 속하지 않은 습관이 포함되어 있습니다.',
     );
   }
-  
+
   //실제 수정 실행 함수 호출
   await habitRepository.updateHabits(habitsData);
 
@@ -112,7 +111,7 @@ export const deleteHabitsService = async (studyId, habitIds) => {
   }
 
   const result = await habitRepository.removehabits(bigIntHabitIds);
-  
+
   return {
     deletedCount: result.count,
   };

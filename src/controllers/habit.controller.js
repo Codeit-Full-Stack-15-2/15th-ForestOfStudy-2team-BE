@@ -8,30 +8,29 @@ export const getHabits = async (req, res, next) => {
     const { date } = req.validated.params || req.query;
 
     const habits = await habitService.getHabitsService(studyId, date);
-  
+
     res.status(HTTP_STATUS.OK).json({
-    success: true,
-    data: habits,
-    message: '습관 목록을 가져오는데 성공했습니다.',
-  });}
-  catch (error) {
+      success: true,
+      data: habits,
+      message: '습관 목록을 가져오는데 성공했습니다.',
+    });
+  } catch (error) {
     next(error);
   }
 };
 
 export const createHabits = async (req, res, next) => {
   try {
-  
-  const { study_id } = req.validated.params;
-  const { titles } = req.validated.body;
+    const { study_id } = req.validated.params;
+    const { titles } = req.validated.body;
 
- const newHabit = await habitService.createHabitsService(study_id, titles);
-  res.status(HTTP_STATUS.CREATE).json({
-    success: true,
-    data: newHabit,
-    message: '습관이 생성되었습니다.',
-  });}
-  catch (error) {
+    const newHabit = await habitService.createHabitsService(study_id, titles);
+    res.status(HTTP_STATUS.CREATE).json({
+      success: true,
+      data: newHabit,
+      message: '습관이 생성되었습니다.',
+    });
+  } catch (error) {
     next(error);
   }
 };
@@ -58,13 +57,10 @@ export const updateHabits = async (req, res, next) => {
 
 export const deleteHabits = async (req, res, next) => {
   try {
-    const { study_id } = req.validated.params ;
-    const { habitIds } = req.validated.body ;
+    const { study_id } = req.validated.params;
+    const { habitIds } = req.validated.body;
 
-    const result = await habitService.deleteHabitsService(
-      study_id,
-      habitIds,
-    );
+    const result = await habitService.deleteHabitsService(study_id, habitIds);
 
     res.status(HTTP_STATUS.OK).json({
       success: true,
