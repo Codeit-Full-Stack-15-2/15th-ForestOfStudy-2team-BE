@@ -15,9 +15,7 @@ export const getStudies = async (req, res, next) => {
       success: true,
       data: {
         list: studies,
-        totalCount,
-        page,
-        pageSize,
+        totalCount,       
       },
       message: '스터디 목록 조회에 성공했습니다.',
     });
