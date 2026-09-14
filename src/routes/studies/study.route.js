@@ -11,6 +11,7 @@ import {
   verifyPasswordSchema,
   updatePointsSchema,
 } from '#src/validations/study.validate.js';
+import * as habitController from '#src/controllers/habit.controller.js';
 import { Router } from 'express';
 export const studyRoute = Router();
 
@@ -63,3 +64,21 @@ studyRoute.patch(
   validateBody(updatePointsSchema),
   studyController.updatePoints,
 ); // 포인트 수정
+
+studyRoute.get('/', validateParams(studyIdSchema), habitController.getHabits); // 오늘의 습관 리스트 조회
+
+studyRoute.post(
+  '/',
+  validateParams(studyIdSchema),
+  //validateBody(createHabitSchema),
+  habitController.createHabits,
+); // 오늘의 습관 만들기
+
+studyRoute.patch(
+  '/',
+  validateParams(studyIdSchema),
+  //validateBody(updateHabitsSchema),
+  habitController.updateHabits,
+); // 오늘의 습관 수정
+
+studyRoute.delete('/', habitController.deleteHabits); // 오늘의 습관 삭제
