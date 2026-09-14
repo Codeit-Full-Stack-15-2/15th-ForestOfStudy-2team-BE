@@ -53,23 +53,19 @@ export const deleteHabits = async (req, res) => {
 };
 
 export const getWeeklyHabitRecords = async (req, res, next) => {
-  try {
-    const studyId = req.validated.params.study_id;
-    const targetDate = req.validated.query.target_date;
-    const page = req.validated.query.page;
-    const pageSize = req.validated.query.page_size;
-    const weeklyHabitRecords = await habitService.getWeeklyRecords(
-      studyId,
-      targetDate,
-      page,
-      pageSize,
-    );
-    res.status(HTTP_STATUS.OK).json({
-      success: true,
-      data: weeklyHabitRecords,
-      message: '주단위 습관 목록을 가져오는데 성공했습니다.',
-    });
-  } catch (error) {
-    next(error);
-  }
+  const studyId = req.validated.params.study_id;
+  const targetDate = req.validated.query.target_date;
+  const page = req.validated.query.page;
+  const pageSize = req.validated.query.page_size;
+  const weeklyHabitRecords = await habitService.getWeeklyRecords(
+    studyId,
+    targetDate,
+    page,
+    pageSize,
+  );
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: weeklyHabitRecords,
+    message: '주단위 습관 목록을 가져오는데 성공했습니다.',
+  });
 };

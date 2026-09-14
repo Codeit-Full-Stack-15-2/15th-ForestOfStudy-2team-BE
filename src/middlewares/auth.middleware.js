@@ -1,5 +1,5 @@
-import { UnauthorizedException } from '#src/errors/unauthorized-exception.js';
 import { ForbiddenException } from '#src/errors/forbidden-exception.js';
+import { UnauthorizedException } from '#src/errors/unauthorized-exception.js';
 import jwt from 'jsonwebtoken';
 import { ERROR_MESSAGES } from '../constants/index.js';
 
@@ -22,7 +22,6 @@ export const verifyAccessToken = (req, res, next) => {
     if (error instanceof UnauthorizedException) {
       return next(error);
     }
-
     next(new UnauthorizedException(ERROR_MESSAGES.TOKEN_INVALID));
   }
 };

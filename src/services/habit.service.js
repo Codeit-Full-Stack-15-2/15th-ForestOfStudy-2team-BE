@@ -118,7 +118,16 @@ export const deleteHabitsService = async (studyId, habitIds) => {
 
 export const getWeeklyRecords = async (studyId, targetDate, page, pageSize) => {
   const numericStudyId = Number(studyId);
+  const study = await studyRepository.findActiveStudyOnly(numericStudyId);
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
+  // 2. 날짜 유효성 검증 방어벽
   const base = dayjs.tz(targetDate);
+  if (!base.isValid()) {
+    throw new BadRequestException(ERROR_MESSAGES.INVALID_DATE_FORMAT);
+  }
 
   const startDate = base.startOf('isoWeek').format('YYYY-MM-DD');
   const endDate = base.endOf('isoWeek').format('YYYY-MM-DD');
