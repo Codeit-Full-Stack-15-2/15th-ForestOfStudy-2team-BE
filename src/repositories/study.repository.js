@@ -13,7 +13,7 @@ export const createStudyRecord = async (data) => {
   });
 };
 
-export const findStudies = async (keyword, orderBy) => {
+export const findStudies = async (keyword, orderBy, page, pageSize) => {
   const searchCondition = keyword
     ? {
         OR: [
@@ -43,12 +43,16 @@ export const findStudies = async (keyword, orderBy) => {
     sortCondition = { point: 'asc' };
   }
 
-  return await prisma.study.findMany({
+  const skip = (page - 1) * pageSize;
+
+  const studies = await prisma.study.findMany({
     where: {
       deletedAt: null,
       ...searchCondition,
     },
     orderBy: sortCondition,
+    skip,
+    take: pageSize,
     select: {
       id: true,
       nickname: true,
@@ -59,6 +63,15 @@ export const findStudies = async (keyword, orderBy) => {
       createdAt: true,
     },
   });
+
+  const totalCount = await prisma.study.count({
+    where: {
+      deletedAt: null,
+      ...searchCondition,
+    },
+  });
+
+  return { studies, totalCount };
 };
 
 export const findStudyById = async (studyId) => {
