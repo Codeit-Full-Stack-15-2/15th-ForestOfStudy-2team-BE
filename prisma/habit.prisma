@@ -1,5 +1,5 @@
 model Habit {
-  id      BigInt    @id @default(autoincrement())
+  id      BigInt @id @default(autoincrement())
   studyId Int    @map("study_id")
   title   String @db.VarChar(255)
 
@@ -16,10 +16,10 @@ model Habit {
 }
 
 model HabitRecord {
-  id         BigInt      @id @default(autoincrement())
-  habitId    BigInt      @map("habit_id")
+  id         BigInt   @id @default(autoincrement())
+  habitId    BigInt   @map("habit_id")
   recordDate DateTime @map("record_date") @db.Date
-  isComplete Boolean @default(false)
+  isComplete Boolean  @default(false)
 
   habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
 
