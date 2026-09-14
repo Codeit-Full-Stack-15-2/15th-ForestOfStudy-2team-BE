@@ -111,3 +111,19 @@ export const updateStudyDeletedAt = async (studyId) => {
 
   return study;
 };
+
+export const findActiveStudyWithPoint = async (studyId) => {
+  return prisma.study.findFirst({
+    where: { id: Number(studyId), deletedAt: null },
+    select: { id: true, point: true },
+  });
+};
+
+export const updateStudyPoint = async (studyId, point) => {
+  const study = prisma.study.update({
+    where: { id: Number(studyId) },
+    data: { point },
+  });
+
+  return study;
+};
