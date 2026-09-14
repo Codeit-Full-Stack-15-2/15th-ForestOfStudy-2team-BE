@@ -1,4 +1,5 @@
 import * as studyService from '#src/services/study.service.js';
+import { success } from 'zod';
 import { HTTP_STATUS } from '../constants/index.js';
 
 export const getStudies = (req, res, next) => {};
@@ -20,8 +21,6 @@ export const verifyStudyPassword = async (req, res, next) => {
   try {
     const { study_id } = req.validated.params;
     const { study_password } = req.validated.body;
-
-    // 서비스 계층에 검증 로직 위임
     const { token } = await studyService.verifyPasswordService(
       study_id,
       study_password,
@@ -62,8 +61,50 @@ export const getStudy = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updatePoints = async (req, res) => {
+  const study_id = req.validated.params.study_id;
+  const minutes = req.validated.body.minutes;
+  const result = await studyService.addPointService(study_id, minutes);
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: result,
+    message: '포인트 수정 성공',
+  });
+};
+
 export const updateStudy = (req, res, next) => {};
-export const deleteStudy = (req, res, next) => {};
-export const createReaction = (req, res, next) => {};
-export const deleteReaction = (req, res, next) => {};
-export const updatePoints = (req, res, next) => {};
+
+export const deleteStudy = async (req, res, next) => {
+  try {
+    const studyId = req.validated.params.study_id;
+    const study = await studyService.deleteStudyService(studyId);
+
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      data: study,
+      message: '스터디 삭제에 성공했습니다.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createReaction = async (req, res, next) => {
+  try {
+    const studyId = req.validated.params.study_id;
+    const body = req.validated.body;
+    const reaction = await studyService.handleReactionToggleService(
+      studyId,
+      body,
+    );
+    res.status(HTTP_STATUS.CREATE).json({
+      success: true,
+      data: reaction,
+      message: '리액션이 생성되었습니다.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};

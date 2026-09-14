@@ -11,10 +11,7 @@ export const createStudySchema = z.object({
     .min(1, '스터디 이름은 비워둘 수 없습니다.')
     .max(10, '스터디 이름은 10자 이하여야 합니다.'),
 
-  description: z
-    .string({ required_error: '소개글은 필수 입력 항목입니다.' })
-    .min(1, '소개글을 반드시 입력해주세요.')
-    .max(100, '소개글은 100자 이하여야 합니다.'),
+  description: z.string().max(100, '소개글은 100자 이하여야 합니다.').nullish(),
 
   background: z
     .string({ required_error: '배경화면 정보는 필수입니다.' })
@@ -40,9 +37,32 @@ export const verifyPasswordSchema = z.object({
 export const studyIdSchema = z.object({
   study_id: z.coerce
     .number({
-      required_error: '스터디 아이디는 숫자여야 합니다.',
+      required_error: '스터디 아이디는 필수 입력값입니다.',
     })
     .int({
       message: '스터디 아이디는 정수여야 합니다.',
-    }),
+    })
+    .positive('스터디 아이디는 양수여야 합니다.'),
+});
+
+export const createReactionSchema = z.object({
+  emoji: z
+    .string({ required_error: '이모지는 필수 입력값입니다.' })
+    .min(1, '이모지는 최소 1자 이상이어야 합니다.')
+    .max(50, '이모지는 최대 50자까지 허용됩니다.'),
+  guest_uuid: z
+    .string({ required_error: 'guestUuid는 필수 입력값입니다.' })
+    .uuid({ message: '올바른 UUID 형식이 아닙니다.' })
+    .nullish(),
+});
+
+export const updatePointsSchema = z.object({
+  minutes: z
+    .number({
+      required_error: '집중 시간(분)은 필수 입력값입니다.',
+    })
+    .int({
+      message: '집중 시간은 정수여야 합니다.',
+    })
+    .min(25, { message: '집중 시간은 최소 25분 이상이어야 합니다.' }),
 });

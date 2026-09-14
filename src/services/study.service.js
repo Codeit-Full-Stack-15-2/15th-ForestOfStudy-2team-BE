@@ -48,6 +48,78 @@ export const getStudyService = async (studyId) => {
     background: study.background,
     point: study.point,
     createdAt: study.createdAt,
-    reactions: [],
+    reactions: study.reactions,
+  };
+};
+
+export const handleReactionToggleService = async (studyId, body) => {
+  const numericStudyId = Number(studyId);
+  const { emoji, guest_uuid } = body;
+
+  const existingReaction = await studyRepository.findActiveReaction({
+    studyId: numericStudyId,
+    emoji,
+    guestUuid: guest_uuid,
+  });
+
+  if (existingReaction) {
+    const softDeleted = await studyRepository.softDeleteReaction(
+      existingReaction.id,
+    );
+    return { action: 'deleted', reaction: softDeleted };
+  }
+
+  // 3. 누른 적이 없다면 새로 등록 (규칙 1)
+  const created = await studyRepository.createReaction({
+    studyId: numericStudyId,
+    emoji,
+    guestUuid: guest_uuid,
+  });
+
+  return { action: 'created', reaction: created };
+};
+
+export const deleteStudyService = async (studyId) => {
+  const study = await studyRepository.findActiveStudyOnly(studyId);
+
+  if (!study) {
+    throw new NotFoundException('존재하지 않거나 이미 삭제된 스터디입니다.');
+  }
+
+  const softDeleted = await studyRepository.updateStudyDeletedAt(studyId);
+
+  return {
+    id: softDeleted.id,
+    nickname: softDeleted.nickname,
+    title: softDeleted.title,
+    description: softDeleted.description,
+    background: softDeleted.background,
+    point: softDeleted.point,
+    createdAt: softDeleted.createdAt,
+    reactions: softDeleted.reactions,
+  };
+};
+
+const findStudyWithPoint = async (studyId) => {
+  const study = await studyRepository.findActiveStudyWithPoint(studyId);
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+  return study;
+};
+
+export const addPointService = async (studyId, minutes) => {
+  const study = await findStudyWithPoint(studyId);
+
+  const addPoint = 3 + Math.floor(minutes / 10);
+  const prevPoint = study.point;
+  const totalPoint = prevPoint + addPoint;
+
+  const updated = await studyRepository.updateStudyPoint(studyId, totalPoint);
+
+  return {
+    add_point: addPoint,
+    prev_point: prevPoint,
+    total_point: updated.point,
   };
 };

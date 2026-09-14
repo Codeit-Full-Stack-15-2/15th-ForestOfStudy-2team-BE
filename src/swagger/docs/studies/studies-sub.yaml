@@ -1,0 +1,161 @@
+/studies/{study_id}/reactions:
+  post: 
+    summary: 이모지 추가
+    tags:
+      - Studies
+    parameters:
+      - in: path
+        name: study_id
+        required: true
+        schema:
+          type: integer
+        description: 이모지를 추가할 스터디 id
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - emoji
+              - guest_uuid
+            properties:
+              emoji:
+                type: string
+                description: 이모지
+                example: "🔥"
+              guest_uuid:
+                type: string
+                description: 유저 식별자
+                example: abc-123
+    responses:
+      200:
+        description: 이모지 추가 성공
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/SuccessResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: integer
+                      description: 생성된 reaction id
+                      example: 1
+                    message:
+                      type: string
+                      example: 이모지 추가 성공
+      400:
+        description: 이모지 추가 실패
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+
+/studies/{study_id}/reactions/{guest_uuid}:
+  delete:
+    summary: 이모지 삭제하기
+    description: 이모지  소프트 딜리트
+    tags:
+      - Studies
+    parameters:
+      - in: path
+        name: study_id
+        required: true
+        schema:
+          type: integer
+        description: 스터디 id
+      - in: path
+        name: guest_uuid
+        required: true
+        schema:
+          type: string
+        description: 유저 식별자
+        example: abc-123
+    responses:
+      200:
+        description: 이모지 삭제 성공
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/SuccessResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        emoji:
+                          type: string
+                          description: 삭제된 이모지
+                          example: "🔥"
+                    message:
+                      type: string
+                      example: 이모지 삭제 성공
+      400:
+        description: 이모지 삭제 실패
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+
+/studies/{study_id}/points:
+  patch:
+    summary: 포인트 수정
+    description: study_id를 사용하여 포인트를 수정합니다.
+    tags:
+      - Studies
+    parameters:
+      - in: path
+        name: study_id
+        required: true
+        schema:
+          type: integer
+        description: 포인트를 수정할 스터디 id
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - point
+            properties:
+              minutes:
+                type: integer
+                description: 집중 완료한 시간(분)
+                example: 25
+    responses:
+      200:
+        description: 포인트 수정 성공
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/SuccessResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        add_point:
+                          type: integer
+                          description: point 증가값
+                          example: 3
+                        prev_point:
+                          type: integer
+                          description: 이전 point 값
+                          example: 456
+                        total_point:
+                          type: integer
+                          description: 전체 point 값
+                          example: 459
+                    message:
+                      type: string
+                      example: 포인트 수정 성공
+      400:
+        description: 포인트 수정 실패
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'

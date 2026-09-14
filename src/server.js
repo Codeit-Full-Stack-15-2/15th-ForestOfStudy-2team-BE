@@ -1,6 +1,8 @@
-import { app } from './app.js';
-import { config } from './config/config.js';
+import app from './app.js';
+import { config, isProduction } from './config/config.js';
 
-app.listen(config.PORT, () => {
-  console.log(`🚀 Server is listening on port ${config.PORT}`);
-});
+if (!isProduction) {
+  app.listen(config.PORT, () => {
+    console.log(`🚀 Server is listening on port ${config.PORT}`);
+  });
+}
