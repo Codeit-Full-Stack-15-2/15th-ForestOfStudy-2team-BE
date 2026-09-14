@@ -57,6 +57,7 @@ studyRoute.patch(
   validateBody(updateStudySchema),
   studyController.updateStudy,
 ); // 스터디 수정
+
 studyRoute.delete(
   '/:study_id',
   validateParams(studyIdSchema),
@@ -74,7 +75,9 @@ studyRoute.post(
 
 studyRoute.patch(
   '/:study_id/points',
+  verifyAccessToken,
   validateParams(studyIdSchema),
+  verifyStudyAccess,
   validateBody(updatePointsSchema),
   studyController.updatePoints,
 ); // 포인트 수정

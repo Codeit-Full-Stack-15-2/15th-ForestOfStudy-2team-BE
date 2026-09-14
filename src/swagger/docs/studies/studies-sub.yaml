@@ -51,53 +51,13 @@
           application/json:
             schema:
               $ref: '#/components/schemas/ErrorResponse'
-
-/studies/{study_id}/reactions/{guest_uuid}:
-  delete:
-    summary: 이모지 삭제하기
-    description: 이모지  소프트 딜리트
-    tags:
-      - Studies
-    parameters:
-      - in: path
-        name: study_id
-        required: true
-        schema:
-          type: integer
-        description: 스터디 id
-      - in: path
-        name: guest_uuid
-        required: true
-        schema:
-          type: string
-        description: 유저 식별자
-        example: abc-123
-    responses:
-      200:
-        description: 이모지 삭제 성공
-        content:
-          application/json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/SuccessResponse'
-                - type: object
-                  properties:
-                    data:
-                      type: object
-                      properties:
-                        emoji:
-                          type: string
-                          description: 삭제된 이모지
-                          example: "🔥"
-                    message:
-                      type: string
-                      example: 이모지 삭제 성공
-      400:
-        description: 이모지 삭제 실패
+      404:
+        description: 존재하지 않거나 삭제된 스터디
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ErrorResponse'
+
 
 /studies/{study_id}/points:
   patch:
@@ -105,6 +65,8 @@
     description: study_id를 사용하여 포인트를 수정합니다.
     tags:
       - Studies
+    security:
+      - bearerAuth: []
     parameters:
       - in: path
         name: study_id
@@ -119,7 +81,7 @@
           schema:
             type: object
             required:
-              - point
+              - minutes
             properties:
               minutes:
                 type: integer
@@ -155,6 +117,24 @@
                       example: 포인트 수정 성공
       400:
         description: 포인트 수정 실패
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+      401:
+        description: 인증 실패 (토큰 없음 또는 유효하지 않음)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+      403:
+        description: 해당 스터디에 대한 권한 없음 (다른 스터디 토큰으로 요청)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+      404:
+        description: 존재하지 않거나 삭제된 스터디
         content:
           application/json:
             schema:
