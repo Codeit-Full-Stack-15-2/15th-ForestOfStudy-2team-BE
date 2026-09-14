@@ -11,14 +11,13 @@ export const getStudies = async (req, res, next) => {
       pageSize,
     );
 
-    const totalPages = Math.ceil(totalCount / pageSize);
-
     res.status(HTTP_STATUS.OK).json({
       success: true,
       data: {
         list: studies,
         totalCount,
-        totalPages,
+        page,
+        pageSize,
       },
       message: '스터디 목록 조회에 성공했습니다.',
     });
