@@ -13,7 +13,7 @@ export const createStudyRecord = async (data) => {
   });
 };
 
-export const findStudies = async (keyword) => {
+export const findStudies = async (keyword, orderBy) => {
   const searchCondition = keyword
     ? {
         OR: [
@@ -31,11 +31,24 @@ export const findStudies = async (keyword) => {
       }
     : {};
 
+  let sortCondition;
+
+  if (orderBy === 'latest') {
+    sortCondition = { createdAt: 'desc' };
+  } else if (orderBy === 'oldest') {
+    sortCondition = { createdAt: 'asc' };
+  } else if (orderBy === 'highPoints') {
+    sortCondition = { point: 'desc' };
+  } else if (orderBy === 'lowPoints') {
+    sortCondition = { point: 'asc' };
+  }
+
   return await prisma.study.findMany({
     where: {
       deletedAt: null,
       ...searchCondition,
     },
+    orderBy: sortCondition,
     select: {
       id: true,
       nickname: true,

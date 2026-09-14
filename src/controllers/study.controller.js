@@ -4,8 +4,8 @@ import { HTTP_STATUS } from '../constants/index.js';
 
 export const getStudies = async (req, res, next) => {
   try {
-    const { keyword } = req.validated.query;
-    const studies = await studyService.getStudiesService(keyword);
+    const { keyword, orderBy } = req.validated.query;
+    const studies = await studyService.getStudiesService(keyword, orderBy);
 
     res.status(HTTP_STATUS.OK).json({
       success: true,
