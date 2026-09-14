@@ -1,8 +1,25 @@
 import * as studyService from '#src/services/study.service.js';
-import { success } from 'zod';
 import { HTTP_STATUS } from '../constants/index.js';
 
-export const getStudies = (req, res, next) => {};
+export const getStudies = async (req, res) => {
+  const { keyword, orderBy, page, pageSize } = req.validated.query;
+
+  const { studies, totalCount } = await studyService.getStudiesService(
+    keyword,
+    orderBy,
+    page,
+    pageSize,
+  );
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: {
+      list: studies,
+      totalCount,
+    },
+    message: '스터디 목록 조회에 성공했습니다.',
+  });
+};
 
 export const createStudy = async (req, res, next) => {
   try {

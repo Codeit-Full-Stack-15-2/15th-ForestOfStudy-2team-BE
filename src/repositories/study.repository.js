@@ -13,6 +13,67 @@ export const createStudyRecord = async (data) => {
   });
 };
 
+export const findStudies = async (keyword, orderBy, page, pageSize) => {
+  const searchCondition = keyword
+    ? {
+        OR: [
+          {
+            title: {
+              contains: keyword,
+            },
+          },
+          {
+            nickname: {
+              contains: keyword,
+            },
+          },
+        ],
+      }
+    : {};
+
+  let sortCondition;
+
+  if (orderBy === 'latest') {
+    sortCondition = { createdAt: 'desc' };
+  } else if (orderBy === 'oldest') {
+    sortCondition = { createdAt: 'asc' };
+  } else if (orderBy === 'highPoints') {
+    sortCondition = { point: 'desc' };
+  } else if (orderBy === 'lowPoints') {
+    sortCondition = { point: 'asc' };
+  }
+
+  const skip = (page - 1) * pageSize;
+
+  const studies = await prisma.study.findMany({
+    where: {
+      deletedAt: null,
+      ...searchCondition,
+    },
+    orderBy: sortCondition,
+    skip,
+    take: pageSize,
+    select: {
+      id: true,
+      nickname: true,
+      title: true,
+      description: true,
+      background: true,
+      point: true,
+      createdAt: true,
+    },
+  });
+
+  const totalCount = await prisma.study.count({
+    where: {
+      deletedAt: null,
+      ...searchCondition,
+    },
+  });
+
+  return { studies, totalCount };
+};
+
 export const findStudyById = async (studyId) => {
   const numericId = Number(studyId);
 

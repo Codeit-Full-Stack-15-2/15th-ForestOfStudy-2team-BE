@@ -38,6 +38,10 @@ export const verifyPasswordService = async (studyId, inputPassword) => {
   return { verified: true, token };
 };
 
+export const getStudiesService = async (keyword, orderBy, page, pageSize) => {
+  return await studyRepository.findStudies(keyword,orderBy, page, pageSize);
+};
+
 export const getStudyService = async (studyId) => {
   const study = await studyRepository.findStudyById(studyId);
   return {

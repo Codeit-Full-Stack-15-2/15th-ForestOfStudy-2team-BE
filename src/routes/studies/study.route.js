@@ -12,6 +12,7 @@ import {
 import {
   createReactionSchema,
   createStudySchema,
+  getStudiesQuerySchema,
   getWeeklyHabitRecordsQuerySchema,
   studyIdSchema,
   verifyPasswordSchema,
@@ -21,7 +22,11 @@ import {
 import { Router } from 'express';
 export const studyRoute = Router();
 
-studyRoute.get('/', studyController.getStudies); // 스터디 리스트 조회
+studyRoute.get(
+  '/',
+  validateQuery(getStudiesQuerySchema),
+  studyController.getStudies,
+); // 스터디 리스트 조회
 
 studyRoute.post(
   '/',

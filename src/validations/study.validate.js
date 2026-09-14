@@ -45,6 +45,27 @@ export const studyIdSchema = z.object({
     .positive('스터디 아이디는 양수여야 합니다.'),
 });
 
+export const getStudiesQuerySchema = z.object({
+  orderBy: z
+    .enum(['latest', 'oldest', 'highPoints', 'lowPoints'])
+    .default('latest'),
+
+  keyword: z.string().trim().optional(),
+
+  page: z.coerce
+    .number()
+    .int('페이지 번호는 정수여야 합니다.')
+    .min(1, '페이지 번호는 1이상이어야 합니다.')
+    .default(1),
+
+  pageSize: z.coerce
+    .number()
+    .int('페이지 크기는 정수여야 합니다.')
+    .min(1, '페이지 크기는 1 이상이어야 합니다.')
+    .max(20, '페이지 크기는 20 이하여야 합니다.')
+    .default(6),
+});
+
 export const createReactionSchema = z.object({
   emoji: z
     .string({ required_error: '이모지는 필수 입력값입니다.' })
