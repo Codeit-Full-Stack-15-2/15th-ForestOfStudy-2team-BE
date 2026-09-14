@@ -1,4 +1,4 @@
-/api/health:
+/health:
   get:
     summary: 서버 상태 확인
     description: 서버가 정상적으로 동작하는지 체크하는 헬스체크 엔드포인트

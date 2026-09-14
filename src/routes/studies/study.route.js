@@ -1,6 +1,9 @@
 import * as habitController from '#src/controllers/habit.controller.js';
 import * as studyController from '#src/controllers/study.controller.js';
-import { verifyAccessToken } from '#src/middlewares/auth.middleware.js';
+import {
+  verifyAccessToken,
+  verifyStudyAccess,
+} from '#src/middlewares/auth.middleware.js';
 import {
   validateBody,
   validateParams,
@@ -9,15 +12,22 @@ import {
 import {
   createReactionSchema,
   createStudySchema,
+  getStudiesQuerySchema,
+  getWeeklyHabitRecordsQuerySchema,
   studyIdSchema,
-  updatePointsSchema,
   verifyPasswordSchema,
+  updateStudySchema,
+  updatePointsSchema,
 } from '#src/validations/study.validate.js';
 import { getWeeklyHabitRecordsQuerySchema } from '#src/validations/habit.validate.js';
 import { Router } from 'express';
 export const studyRoute = Router();
 
-studyRoute.get('/', studyController.getStudies); // 스터디 리스트 조회
+studyRoute.get(
+  '/',
+  validateQuery(getStudiesQuerySchema),
+  studyController.getStudies,
+); // 스터디 리스트 조회
 
 studyRoute.post(
   '/',
@@ -42,9 +52,13 @@ studyRoute.post(
 
 studyRoute.patch(
   '/:study_id',
+  verifyAccessToken,
   validateParams(studyIdSchema),
+  verifyStudyAccess,
+  validateBody(updateStudySchema),
   studyController.updateStudy,
 ); // 스터디 수정
+
 studyRoute.delete(
   '/:study_id',
   validateParams(studyIdSchema),
@@ -62,7 +76,9 @@ studyRoute.post(
 
 studyRoute.patch(
   '/:study_id/points',
+  verifyAccessToken,
   validateParams(studyIdSchema),
+  verifyStudyAccess,
   validateBody(updatePointsSchema),
   studyController.updatePoints,
 ); // 포인트 수정

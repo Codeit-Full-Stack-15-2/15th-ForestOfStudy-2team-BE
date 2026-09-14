@@ -38,6 +38,10 @@ export const verifyPasswordService = async (studyId, inputPassword) => {
   return { verified: true, token };
 };
 
+export const getStudiesService = async (keyword, orderBy, page, pageSize) => {
+  return await studyRepository.findStudies(keyword,orderBy, page, pageSize);
+};
+
 export const getStudyService = async (studyId) => {
   const study = await studyRepository.findStudyById(studyId);
   return {
@@ -97,6 +101,26 @@ export const deleteStudyService = async (studyId) => {
     point: softDeleted.point,
     createdAt: softDeleted.createdAt,
     reactions: softDeleted.reactions,
+  };
+};
+
+export const updateStudyService = async (studyId, updateData) => {
+  const study = await studyRepository.findStudyById(studyId);
+
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
+  const updatedStudy = await studyRepository.updateStudyRecord(
+    studyId,
+    updateData,
+  );
+
+  return {
+    nickname: updatedStudy.nickname,
+    title: updatedStudy.title,
+    description: updatedStudy.description,
+    background: updatedStudy.background,
   };
 };
 

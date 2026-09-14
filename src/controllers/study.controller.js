@@ -1,8 +1,25 @@
 import * as studyService from '#src/services/study.service.js';
-import { success } from 'zod';
 import { HTTP_STATUS } from '../constants/index.js';
 
-export const getStudies = (req, res, next) => {};
+export const getStudies = async (req, res) => {
+  const { keyword, orderBy, page, pageSize } = req.validated.query;
+
+  const { studies, totalCount } = await studyService.getStudiesService(
+    keyword,
+    orderBy,
+    page,
+    pageSize,
+  );
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: {
+      list: studies,
+      totalCount,
+    },
+    message: '스터디 목록 조회에 성공했습니다.',
+  });
+};
 
 export const createStudy = async (req, res, next) => {
   try {
@@ -62,6 +79,21 @@ export const getStudy = async (req, res, next) => {
   }
 };
 
+export const updateStudy = async (req, res) => {
+  const { study_id } = req.validated.params;
+  const updateData = req.validated.body;
+
+  const updatedStudy = await studyService.updateStudyService(
+    study_id,
+    updateData,
+  );
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: updatedStudy,
+    message: '스터디가 수정되었습니다.',
+  });
+};
+
 export const updatePoints = async (req, res) => {
   const study_id = req.validated.params.study_id;
   const minutes = req.validated.body.minutes;
@@ -73,8 +105,6 @@ export const updatePoints = async (req, res) => {
     message: '포인트 수정 성공',
   });
 };
-
-export const updateStudy = (req, res, next) => {};
 
 export const deleteStudy = async (req, res, next) => {
   try {
