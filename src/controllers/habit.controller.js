@@ -1,11 +1,8 @@
 import * as habitService from '#src/services/habit.service.js';
 import { HTTP_STATUS } from '../constants/index.js';
 
-export const createHabit = (req, res, next) => {};
-export const updateHabit = (req, res, next) => {};
-export const deleteHabit = (req, res, next) => {};
 
-export const getHabits = async (req, res) => {
+export const getHabits = async (req, res, next) => {
   const { studyId } = req.validated.params;
   const { date } = req.validated.params || req.query;
 
