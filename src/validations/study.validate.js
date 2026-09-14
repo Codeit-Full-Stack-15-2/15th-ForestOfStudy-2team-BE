@@ -55,3 +55,14 @@ export const createReactionSchema = z.object({
     .uuid({ message: '올바른 UUID 형식이 아닙니다.' })
     .nullish(),
 });
+
+export const updatePointsSchema = z.object({
+  minutes: z
+    .number({
+      required_error: '집중 시간(분)은 필수 입력값입니다.',
+    })
+    .int({
+      message: '집중 시간은 정수여야 합니다.',
+    })
+    .min(25, { message: '집중 시간은 최소 25분 이상이어야 합니다.' }),
+});

@@ -113,3 +113,27 @@ export const deleteStudyService = async (studyId) => {
     reactions: softDeleted.reactions,
   };
 };
+
+const findStudyWithPoint = async (studyId) => {
+  const study = await studyRepository.findActiveStudyWithPoint(studyId);
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+  return study;
+};
+
+export const addPointService = async (studyId, minutes) => {
+  const study = await findStudyWithPoint(studyId);
+
+  const addPoint = 3 + Math.floor(minutes / 10);
+  const prevPoint = study.point;
+  const totalPoint = prevPoint + addPoint;
+
+  const updated = await studyRepository.updateStudyPoint(studyId, totalPoint);
+
+  return {
+    add_point: addPoint,
+    prev_point: prevPoint,
+    total_point: updated.point,
+  };
+};
