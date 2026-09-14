@@ -10,13 +10,9 @@ export const createHabitsService = async (studyId, titles) => {
     throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
   }
 
-  const newHabits = await habitRepository.createHabit(studyId, titles);
+  const newHabits = await habitRepository.createHabit(Number(studyId), titles);
 
-  return newHabits.map((habit) => ({
-    ...habit,
-    id: habit.id.toString(),
-    studyId: habit.studyId.toString(),
-  }));
+  return newHabits;
 };
 
 export const getHabitsService = async (studyId, targetDate) => {
@@ -25,23 +21,29 @@ export const getHabitsService = async (studyId, targetDate) => {
     throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
   }
 
-  const date = targetDate ? new Date(targetDate) : new Date();
-  const startDate = new Date(date.setHours(0, 0, 0, 0));
-  const endDate = new Date(date.setHours(23, 59, 59, 999));
+  const baseDate = targetDate ? new Date(targetDate) : new Date();
+  const startDate = new Date(baseDate);
+  startDate.setHours(0, 0, 0, 0);
+  const endDate = new Date(baseDate);
+  endDate.setHours(23, 59, 59, 999);
 
-  const habits = await habitRepository.findHabits(studyId, startDate, endDate);
+  const habits = await habitRepository.findHabits(
+    Number(studyId),
+    startDate,
+    endDate,
+  );
 
   if (!habits || habits.length === 0) {
     return [];
   }
 
   return habits.map((habit) => ({
-    id: habit.id.toString(),
-    studyId: habit.studyId.toString(),
+    id: habit.id,
+    studyId: habit.studyId,
     title: habit.title,
     createdAt: habit.createdAt,
     records: habit.records.map((record) => ({
-      id: record.id.toString(),
+      id: record.id,
       recordDate: record.recordDate,
       isComplete: record.isComplete,
     })),
@@ -57,7 +59,7 @@ export const updateHabitsService = async (studyId, habitsData) => {
   }
 
   //수정 대상 습관들이 해당 스터디에 실제 속해있는지 확인
-  const habitIds = habitsData.map((h) => BigInt(h.id));
+  const habitIds = habitsData.map((h) => Number(h.id));
   const existingHabits = await habitRepository.findHabitsByIds(habitIds);
 
   if (existingHabits.length !== habitsData.length) {
@@ -65,7 +67,7 @@ export const updateHabitsService = async (studyId, habitsData) => {
   }
 
   const isInvalidStudy = existingHabits.some(
-    (habit) => habit.studyId !== BigInt(studyId),
+    (habit) => habit.studyId !== Number(studyId),
   );
   if (isInvalidStudy) {
     throw new BadRequestException(
@@ -80,11 +82,7 @@ export const updateHabitsService = async (studyId, habitsData) => {
   const updateHabits = await habitRepository.findHabitsByIds(habitIds);
 
   // 수정된 최신 습관 목록 다시 조회하여 반환
-  return updateHabits.map((habit) => ({
-    ...habit,
-    id: habit.id.toString(),
-    studyId: habit.studyId.toString(),
-  }));
+  return updateHabits;
 };
 
 export const deleteHabitsService = async (studyId, habitIds) => {
@@ -94,15 +92,15 @@ export const deleteHabitsService = async (studyId, habitIds) => {
   }
 
   //2. 삭제할 습관들이 DB에 유효하게 존재하는지 확인 (deletedAt: null인 항목만)
-  const bigIntHabitIds = habitIds.map((id) => BigInt(id));
-  const existingHabits = await habitRepository.findHabitsByIds(bigIntHabitIds);
+  const targetHabitIds = habitIds.map((id) => Number(id));
+  const existingHabits = await habitRepository.findHabitsByIds(targetHabitIds);
 
   if (existingHabits.length !== habitIds.length) {
     throw new NotFoundException(ERROR_MESSAGES.HABIT_NOT_FOUND);
   }
 
   const isInvalidStudy = existingHabits.some(
-    (habit) => habit.studyId !== BigInt(studyId),
+    (habit) => habit.studyId !== Number(studyId),
   );
   if (isInvalidStudy) {
     throw new BadRequestException(
@@ -110,7 +108,7 @@ export const deleteHabitsService = async (studyId, habitIds) => {
     );
   }
 
-  const result = await habitRepository.removehabits(bigIntHabitIds);
+  const result = await habitRepository.removehabits(targetHabitIds);
 
   return {
     deletedCount: result.count,
