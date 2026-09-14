@@ -1,5 +1,4 @@
 import { prisma } from '#src/db/prisma.js';
-import { emoji } from 'zod';
 
 export const createStudyRecord = async (data) => {
   return await prisma.study.create({
