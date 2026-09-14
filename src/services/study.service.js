@@ -39,7 +39,7 @@ export const verifyPasswordService = async (studyId, inputPassword) => {
 };
 
 export const getStudiesService = async (keyword, orderBy, page, pageSize) => {
-  return await studyRepository.findStudies(keyword,orderBy, page, pageSize);
+  return await studyRepository.findStudies(keyword, orderBy, page, pageSize);
 };
 
 export const getStudyService = async (studyId) => {
