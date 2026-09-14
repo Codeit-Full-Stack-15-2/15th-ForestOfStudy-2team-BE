@@ -24,16 +24,19 @@ export const findHabits = async (studyId, startDate, endDate) => {
     },
     include: {
       records: {
-        where: Object.keys(recordWhere).length > 0 ? {recordDate:recordWhere} : undefined,
+        where:
+          Object.keys(recordWhere).length > 0
+            ? { recordDate: recordWhere }
+            : undefined,
       },
     },
   });
 };
 
-export const findHabitsByIds = async(habitIds) => {
+export const findHabitsByIds = async (habitIds) => {
   return await prisma.habit.findMany({
     where: {
-      id: {in: habitIds.map((id) => BigInt(id))},
+      id: { in: habitIds.map((id) => BigInt(id)) },
       deletedAt: null,
     },
   });
@@ -76,3 +79,9 @@ export const upsertHabitRecord = async (habitId, recordDate, isComplete) => {
     },
   });
 };
+
+export const findHabitsWithRecordsByStudyIdAndDateRange = async (
+  studyId,
+  start,
+  end,
+) => {};
