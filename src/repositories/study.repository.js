@@ -1,4 +1,4 @@
-  import { prisma } from '#src/db/prisma.js';
+import { prisma } from '#src/db/prisma.js';
 
 export const createStudyRecord = async (data) => {
   return await prisma.study.create({

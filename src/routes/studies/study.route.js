@@ -65,7 +65,7 @@ studyRoute.patch(
   studyController.updatePoints,
 ); // 포인트 수정
 
-studyRoute.get('/', validateParams(studyIdSchema), habitController.getHabits); // 오늘의 습관 리스트 조회 (예: /habits?study_id=1)
+studyRoute.get('/', validateParams(studyIdSchema), habitController.getHabits); // 오늘의 습관 리스트 조회
 
 studyRoute.post(
   '/',
