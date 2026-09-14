@@ -30,13 +30,19 @@ studyRoute.post(
   studyController.createStudy,
 ); // 스터디 만들기
 
+studyRoute.get('/verify', verifyAccessToken, studyController.verifyToken);
+
+studyRoute.get(
+  '/records/weekly',
+  validateQuery(getWeeklyHabitRecordsQuerySchema),
+  habitController.getWeeklyHabitRecords,
+); // 주단위 습관 기록 조회
+
 studyRoute.get(
   '/:study_id',
   validateParams(studyIdSchema),
   studyController.getStudy,
 ); // 스터디 개별 조회
-
-studyRoute.get('/verify', verifyAccessToken, studyController.verifyToken);
 
 studyRoute.post(
   '/:study_id/verify',
@@ -98,9 +104,3 @@ studyRoute.delete(
   validateBody(deleteHabitsSchema),
   habitController.deleteHabits,
 ); // 오늘의 습관 삭제
-
-studyRoute.get(
-  '/records/weekly',
-  validateQuery(getWeeklyHabitRecordsQuerySchema),
-  habitController.getWeeklyHabitRecords,
-); // 주단위 습관 기록 조회
