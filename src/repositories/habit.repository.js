@@ -82,6 +82,63 @@ export const upsertHabitRecord = async (habitId, recordDate, isComplete) => {
 
 export const findHabitsWithRecordsByStudyIdAndDateRange = async (
   studyId,
-  start,
-  end,
-) => {};
+  startDate,
+  endDate,
+  page = 1,
+  pageSize = 7,
+) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const skip = (Number(page) - 1) * Number(pageSize);
+  const take = Number(pageSize);
+
+  const whereCondition = {
+    studyId: Number(studyId),
+    OR: [
+      {
+        deletedAt: null,
+      },
+      {
+        records: {
+          some: {
+            deletedAt: null,
+            recordDate: {
+              gte: start,
+              lte: end,
+            },
+          },
+        },
+      },
+    ],
+  };
+
+  const [totalCount, habitRecords] = await prisma.$transaction([
+    prisma.habit.count({
+      where: whereCondition,
+    }),
+    prisma.habit.findMany({
+      where: whereCondition,
+      include: {
+        records: {
+          where: {
+            deletedAt: null,
+            recordDate: {
+              gte: start,
+              lte: end,
+            },
+          },
+          orderBy: {
+            recordDate: 'asc',
+          },
+        },
+      },
+      skip,
+      take,
+      orderBy: {
+        id: 'asc',
+      },
+    }),
+  ]);
+
+  return { totalCount, habits: habitRecords };
+};

@@ -2,6 +2,7 @@ import { BadRequestException } from '#src/errors/bad-request-exception.js';
 import { NotFoundException } from '#src/errors/not-found-exception.js';
 import * as habitRepository from '#src/repositories/habit.repository.js';
 import * as studyRepository from '#src/repositories/study.repository.js';
+import dayjs from '#src/utils/dayjs.js';
 import { ERROR_MESSAGES } from '../constants/index.js';
 
 export const createHabitsService = async (studyId, titles) => {
@@ -115,15 +116,46 @@ export const deleteHabitsService = async (studyId, habitIds) => {
   };
 };
 
-export const getWeeklyRecords = async (studyId, targetDate) => {
+export const getWeeklyRecords = async (studyId, targetDate, page, pageSize) => {
   const numericStudyId = Number(studyId);
+  const base = dayjs.tz(targetDate);
 
-  const weeklyHabitRecords =
+  const startDate = base.startOf('isoWeek').format('YYYY-MM-DD');
+  const endDate = base.endOf('isoWeek').format('YYYY-MM-DD');
+
+  const { totalCount, habits } =
     await habitRepository.findHabitsWithRecordsByStudyIdAndDateRange(
       numericStudyId,
-      start,
-      end,
+      startDate,
+      endDate,
+      page,
+      pageSize,
     );
 
-  return weeklyHabitRecords;
+  const weekDays = Array.from({ length: 7 }, (_, i) =>
+    base.startOf('isoWeek').add(i, 'day').format('YYYY-MM-DD'),
+  );
+
+  const formattedHabits = habits.map((habit) => {
+    const weeklyRecords = weekDays.map((dateStr) => {
+      const foundRecord = habit.records.find(
+        (rec) => dayjs.tz(rec.recordDate).format('YYYY-MM-DD') === dateStr,
+      );
+
+      return {
+        date: dateStr,
+        record: foundRecord || null,
+      };
+    });
+
+    return {
+      ...habit,
+      weeklyRecords,
+    };
+  });
+
+  return {
+    totalCount,
+    list: formattedHabits,
+  };
 };
