@@ -375,9 +375,15 @@
           application/json:
             schema:
               $ref: '#/components/schemas/ErrorResponse'
+            example:
+              success: false
+              message: 인증 정보가 없거나 유효하지 않습니다.
       400:
         description: 스터디 삭제 실패
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ErrorResponse'
+            example:
+              success: false
+              message: 요청 값이 유효하지 않습니다.

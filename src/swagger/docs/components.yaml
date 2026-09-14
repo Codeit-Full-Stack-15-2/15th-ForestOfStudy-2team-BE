@@ -1,4 +1,3 @@
-# src/swagger/docs/components.yaml
 components:
   schemas:
     SuccessResponse:
