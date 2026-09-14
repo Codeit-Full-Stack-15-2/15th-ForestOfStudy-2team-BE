@@ -2,7 +2,7 @@ import * as habitService from '#src/services/habit.service.js';
 import { HTTP_STATUS } from '../constants/index.js';
 
 
-export const getHabits = async (req, res, next) => {
+export const getHabits = async (req, res) => {
   const { studyId } = req.validated.params;
   const { date } = req.validated.params || req.query;
 
