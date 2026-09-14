@@ -100,6 +100,26 @@ export const deleteStudyService = async (studyId) => {
   };
 };
 
+export const updateStudyService = async (studyId, updateData) => {
+  const study = await studyRepository.findStudyById(studyId);
+
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
+  const updatedStudy = await studyRepository.updateStudyRecord(
+    studyId,
+    updateData,
+  );
+
+  return {
+    nickname: updatedStudy.nickname,
+    title: updatedStudy.title,
+    description: updatedStudy.description,
+    background: updatedStudy.background,
+  };
+};
+
 const findStudyWithPoint = async (studyId) => {
   const study = await studyRepository.findActiveStudyWithPoint(studyId);
   if (!study) {

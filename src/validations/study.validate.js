@@ -56,6 +56,24 @@ export const createReactionSchema = z.object({
     .nullish(),
 });
 
+export const updateStudySchema = z.object({
+  nickname: z
+    .string({ required_error: '닉네임은 필수 입력 항목입니다.' })
+    .min(1, '닉네임은 비워둘 수 없습니다.')
+    .max(10, '닉네임은 10자 이하여야 합니다.'),
+
+  title: z
+    .string({ required_error: '스터디 이름은 필수 입력 항목입니다.' })
+    .min(1, '스터디 이름은 비워둘 수 없습니다.')
+    .max(10, '스터디 이름은 10자 이하여야 합니다.'),
+
+  description: z.string().max(100, '소개글은 100자 이하여야 합니다.').nullish(),
+
+  background: z
+    .string({ required_error: '배경화면 정보는 필수입니다.' })
+    .min(1, '배경화면 값을 입력해주세요.'),
+});
+
 export const getWeeklyHabitRecordsQuerySchema = studyIdSchema.extend({
   target_date: z
     .string({ required_error: 'startDate는 필수 입력값입니다.' })

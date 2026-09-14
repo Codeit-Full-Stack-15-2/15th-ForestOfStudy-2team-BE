@@ -1,6 +1,9 @@
 import * as habitController from '#src/controllers/habit.controller.js';
 import * as studyController from '#src/controllers/study.controller.js';
-import { verifyAccessToken } from '#src/middlewares/auth.middleware.js';
+import {
+  verifyAccessToken,
+  verifyStudyAccess,
+} from '#src/middlewares/auth.middleware.js';
 import {
   validateBody,
   validateParams,
@@ -11,8 +14,9 @@ import {
   createStudySchema,
   getWeeklyHabitRecordsQuerySchema,
   studyIdSchema,
-  updatePointsSchema,
   verifyPasswordSchema,
+  updateStudySchema,
+  updatePointsSchema,
 } from '#src/validations/study.validate.js';
 import { Router } from 'express';
 export const studyRoute = Router();
@@ -42,7 +46,10 @@ studyRoute.post(
 
 studyRoute.patch(
   '/:study_id',
+  verifyAccessToken,
   validateParams(studyIdSchema),
+  verifyStudyAccess,
+  validateBody(updateStudySchema),
   studyController.updateStudy,
 ); // 스터디 수정
 studyRoute.delete(

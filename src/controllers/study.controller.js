@@ -62,6 +62,21 @@ export const getStudy = async (req, res, next) => {
   }
 };
 
+export const updateStudy = async (req, res) => {
+  const { study_id } = req.validated.params;
+  const updateData = req.validated.body;
+
+  const updatedStudy = await studyService.updateStudyService(
+    study_id,
+    updateData,
+  );
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: updatedStudy,
+    message: '스터디가 수정되었습니다.',
+  });
+};
+
 export const updatePoints = async (req, res) => {
   const study_id = req.validated.params.study_id;
   const minutes = req.validated.body.minutes;
@@ -73,8 +88,6 @@ export const updatePoints = async (req, res) => {
     message: '포인트 수정 성공',
   });
 };
-
-export const updateStudy = (req, res, next) => {};
 
 export const deleteStudy = async (req, res, next) => {
   try {
