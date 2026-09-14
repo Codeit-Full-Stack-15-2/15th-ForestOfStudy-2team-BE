@@ -1,6 +1,9 @@
 import * as habitService from '#src/services/habit.service.js';
-import * as studyService from '#src/services/study.service.js';
-import { HTTP_STATUS } from '#src/constants/http-status.js';
+import { HTTP_STATUS } from '../constants/index.js';
+
+export const createHabit = (req, res, next) => {};
+export const updateHabit = (req, res, next) => {};
+export const deleteHabit = (req, res, next) => {};
 
 export const getHabits = async (req, res) => {
   const { studyId } = req.validated.params;
@@ -51,4 +54,22 @@ export const deleteHabits = async (req, res) => {
     data: result,
     message: '습관을 성공적으로 삭제했습니다.',
   });
+};
+
+export const getWeeklyHabitRecords = async (req, res, next) => {
+  try {
+    const studyId = req.validated.query.study_id;
+    const targetDate = req.validated.query.start_date;
+    const weeklyHabitRecords = await habitService.getWeeklyRecords(
+      studyId,
+      targetDate,
+    );
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      data: weeklyHabitRecords,
+      message: '스터디가 생성되었습니다.',
+    });
+  } catch (error) {
+    next(error);
+  }
 };
