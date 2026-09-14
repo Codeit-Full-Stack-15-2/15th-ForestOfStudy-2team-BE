@@ -3,7 +3,6 @@ import { UnauthorizedException } from '#src/errors/unauthorized-exception.js';
 import * as studyRepository from '#src/repositories/study.repository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { randomUUID } from 'node:crypto';
 import { ERROR_MESSAGES } from '../constants/index.js';
 
 export const createStudyService = async (studyData) => {
@@ -61,25 +60,12 @@ export const handleReactionToggleService = async (studyId, body) => {
   const numericStudyId = Number(studyId);
   const { emoji, guest_uuid } = body;
 
-  // 1. guest_uuid가 없는 경우: 신규 UUID 발급 후 무조건 생성 (규칙 1)
-  if (!guest_uuid) {
-    const newGuestUuid = randomUUID();
-    const created = await studyRepository.createReaction({
-      studyId: numericStudyId,
-      emoji,
-      guestUuid: newGuestUuid,
-    });
-    return { action: 'created', reaction: created };
-  }
-
-  // 2. guest_uuid가 있는 경우: 기존 동일 이모지 활성 레코드 탐색
   const existingReaction = await studyRepository.findActiveReaction({
     studyId: numericStudyId,
     emoji,
     guestUuid: guest_uuid,
   });
 
-  // 3. 이미 누른 이모지라면 취소 처리 (규칙 3)
   if (existingReaction) {
     const softDeleted = await studyRepository.softDeleteReaction(
       existingReaction.id,
@@ -87,7 +73,7 @@ export const handleReactionToggleService = async (studyId, body) => {
     return { action: 'deleted', reaction: softDeleted };
   }
 
-  // 4. 누른 적이 없다면 기존 UUID로 새로 등록 (규칙 2)
+  // 3. 누른 적이 없다면 새로 등록 (규칙 1)
   const created = await studyRepository.createReaction({
     studyId: numericStudyId,
     emoji,
@@ -115,5 +101,29 @@ export const deleteStudyService = async (studyId) => {
     point: softDeleted.point,
     createdAt: softDeleted.createdAt,
     reactions: softDeleted.reactions,
+  };
+};
+
+const findStudyWithPoint = async (studyId) => {
+  const study = await studyRepository.findActiveStudyWithPoint(studyId);
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+  return study;
+};
+
+export const addPointService = async (studyId, minutes) => {
+  const study = await findStudyWithPoint(studyId);
+
+  const addPoint = 3 + Math.floor(minutes / 10);
+  const prevPoint = study.point;
+  const totalPoint = prevPoint + addPoint;
+
+  const updated = await studyRepository.updateStudyPoint(studyId, totalPoint);
+
+  return {
+    add_point: addPoint,
+    prev_point: prevPoint,
+    total_point: updated.point,
   };
 };

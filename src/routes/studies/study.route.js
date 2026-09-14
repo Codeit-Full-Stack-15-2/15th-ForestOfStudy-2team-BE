@@ -11,6 +11,7 @@ import {
   getStudiesQuerySchema,
   studyIdSchema,
   verifyPasswordSchema,
+  updatePointsSchema,
 } from '#src/validations/study.validate.js';
 import { Router } from 'express';
 export const studyRoute = Router();
@@ -62,4 +63,9 @@ studyRoute.post(
   studyController.createReaction,
 ); // 이모지 추가
 
-studyRoute.patch('/:study_id/points', studyController.updatePoints); // 포인트 수정
+studyRoute.patch(
+  '/:study_id/points',
+  validateParams(studyIdSchema),
+  validateBody(updatePointsSchema),
+  studyController.updatePoints,
+); // 포인트 수정

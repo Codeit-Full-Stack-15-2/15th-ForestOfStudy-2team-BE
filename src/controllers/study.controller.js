@@ -1,4 +1,5 @@
 import * as studyService from '#src/services/study.service.js';
+import { success } from 'zod';
 import { HTTP_STATUS } from '../constants/index.js';
 
 export const getStudies = async (req, res, next) => {
@@ -75,6 +76,19 @@ export const getStudy = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updatePoints = async (req, res) => {
+  const study_id = req.validated.params.study_id;
+  const minutes = req.validated.body.minutes;
+  const result = await studyService.addPointService(study_id, minutes);
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: result,
+    message: '포인트 수정 성공',
+  });
+};
+
 export const updateStudy = (req, res, next) => {};
 
 export const deleteStudy = async (req, res, next) => {
@@ -109,4 +123,3 @@ export const createReaction = async (req, res, next) => {
     next(error);
   }
 };
-export const updatePoints = (req, res, next) => {};
