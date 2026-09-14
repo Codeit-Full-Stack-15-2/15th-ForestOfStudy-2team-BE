@@ -1,5 +1,4 @@
 import express from 'express';
-import { habitRoute } from './habits/habit.route.js';
 import { studyRoute } from './studies/study.route.js';
 
 export const router = express.Router();

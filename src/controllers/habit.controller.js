@@ -1,6 +1,6 @@
 import * as habitService from '#src/services/habit.service.js';
 import * as studyService from '#src/services/study.service.js';
-import { HTTP_STATUS } from '../constants';
+import { HTTP_STATUS } from '#src/constants/http-status.js';
 
 export const getHabits = async (req, res, next) => {
   try {
