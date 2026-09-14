@@ -9,11 +9,11 @@ import {
 import {
   createReactionSchema,
   createStudySchema,
-  getWeeklyHabitRecordsQuerySchema,
   studyIdSchema,
   updatePointsSchema,
   verifyPasswordSchema,
 } from '#src/validations/study.validate.js';
+import { getWeeklyHabitRecordsQuerySchema } from '#src/validations/habit.validate.js';
 import { Router } from 'express';
 export const studyRoute = Router();
 
@@ -86,7 +86,8 @@ studyRoute.patch(
 studyRoute.delete('/', habitController.deleteHabits); // 오늘의 습관 삭제
 
 studyRoute.get(
-  '/records/weekly',
+  '/:study_id/habits/records/weekly',
+  validateParams(studyIdSchema),
   validateQuery(getWeeklyHabitRecordsQuerySchema),
   habitController.getWeeklyHabitRecords,
 ); // 주단위 습관 기록 조회

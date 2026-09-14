@@ -7,6 +7,6 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isoWeek);
 
-dayjs.tz.setDefautl('Asia/Seoul');
+dayjs.tz.setDefault('Asia/Seoul');
 
 export default dayjs;

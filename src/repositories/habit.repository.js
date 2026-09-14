@@ -82,6 +82,50 @@ export const upsertHabitRecord = async (habitId, recordDate, isComplete) => {
 
 export const findHabitsWithRecordsByStudyIdAndDateRange = async (
   studyId,
-  start,
-  end,
-) => {};
+  startDate,
+  endDate,
+) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  const habitRecords = await prisma.habit.findMany({
+    where: {
+      studyId: Number(studyId),
+      OR: [
+        {
+          deletedAt: null,
+        },
+        {
+          records: {
+            some: {
+              deletedAt: null,
+              recordDate: {
+                gte: start,
+                lte: end,
+              },
+            },
+          },
+        },
+      ],
+    },
+    include: {
+      records: {
+        where: {
+          deletedAt: null,
+          recordDate: {
+            gte: start,
+            lte: end,
+          },
+        },
+        orderBy: {
+          recordDate: 'asc',
+        },
+      },
+    },
+    orderBy: {
+      id: 'asc',
+    },
+  });
+
+  return habitRecords;
+};
