@@ -13,10 +13,28 @@ export const createStudyRecord = async (data) => {
   });
 };
 
-export const findStudies = async () => {
+export const findStudies = async (keyword) => {
+  const searchCondition = keyword
+    ? {
+        OR: [
+          {
+            title: {
+              contains: keyword,
+            },
+          },
+          {
+            nickname: {
+              contains: keyword,
+            },
+          },
+        ],
+      }
+    : {};
+
   return await prisma.study.findMany({
     where: {
       deletedAt: null,
+      ...searchCondition,
     },
     select: {
       id: true,

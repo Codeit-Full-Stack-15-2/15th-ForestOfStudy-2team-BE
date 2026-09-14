@@ -39,8 +39,8 @@ export const verifyPasswordService = async (studyId, inputPassword) => {
   return { verified: true, token };
 };
 
-export const getStudiesService = async () => {
-  return await studyRepository.findStudies();
+export const getStudiesService = async (keyword) => {
+  return await studyRepository.findStudies(keyword);
 };
 
 export const getStudyService = async (studyId) => {

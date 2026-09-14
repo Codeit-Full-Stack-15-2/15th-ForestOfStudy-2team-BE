@@ -3,7 +3,8 @@ import { HTTP_STATUS } from '../constants/index.js';
 
 export const getStudies = async (req, res, next) => {
   try {
-    const studies = await studyService.getStudiesService();
+    const { keyword } = req.validated.query;
+    const studies = await studyService.getStudiesService(keyword);
 
     res.status(HTTP_STATUS.OK).json({
       success: true,
