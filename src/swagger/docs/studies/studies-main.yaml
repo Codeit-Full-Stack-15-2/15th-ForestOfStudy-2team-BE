@@ -249,6 +249,12 @@
           application/json:
             schema:
               $ref: '#/components/schemas/ErrorResponse'
+      404:
+        description: 존재하지 않거나 삭제된 스터디
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
 
   patch:
     summary: 스터디 수정
@@ -318,14 +324,26 @@
                     message:
                       type: string
                       example: 스터디 수정 성공
+      400:
+        description: 스터디 수정 실패
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
       401:
         description: 인증 실패 (토큰 없음 또는 유효하지 않음)
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ErrorResponse'
-      400:
-        description: 스터디 수정 실패
+      403:
+        description: 해당 스터디에 대한 권한 없음 (다른 스터디 토큰으로 요청)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+      404:
+        description: 존재하지 않거나 삭제된 스터디
         content:
           application/json:
             schema:
@@ -369,6 +387,7 @@
                     message:
                       type: string
                       example: 스터디 삭제 성공
+<<<<<<< Updated upstream
       401:
         description: 인증 실패 (토큰 없음 또는 유효하지 않음)
         content:
@@ -378,12 +397,35 @@
             example:
               success: false
               message: 인증 정보가 없거나 유효하지 않습니다.
+=======
+>>>>>>> Stashed changes
       400:
         description: 스터디 삭제 실패
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ErrorResponse'
+<<<<<<< Updated upstream
             example:
               success: false
               message: 요청 값이 유효하지 않습니다.
+=======
+      401:
+        description: 인증 실패 (토큰 없음 또는 유효하지 않음)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+      403:
+        description: 해당 스터디에 대한 권한 없음 (다른 스터디 토큰으로 요청)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+      404:
+        description: 존재하지 않거나 삭제된 스터디
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+>>>>>>> Stashed changes
