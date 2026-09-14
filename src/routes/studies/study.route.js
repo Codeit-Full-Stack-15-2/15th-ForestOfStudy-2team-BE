@@ -13,7 +13,6 @@ import {
   createReactionSchema,
   createStudySchema,
   getStudiesQuerySchema,
-  getWeeklyHabitRecordsQuerySchema,
   studyIdSchema,
   verifyPasswordSchema,
   updateStudySchema,
