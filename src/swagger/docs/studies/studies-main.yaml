@@ -387,29 +387,12 @@
                     message:
                       type: string
                       example: 스터디 삭제 성공
-<<<<<<< Updated upstream
-      401:
-        description: 인증 실패 (토큰 없음 또는 유효하지 않음)
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ErrorResponse'
-            example:
-              success: false
-              message: 인증 정보가 없거나 유효하지 않습니다.
-=======
->>>>>>> Stashed changes
       400:
         description: 스터디 삭제 실패
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ErrorResponse'
-<<<<<<< Updated upstream
-            example:
-              success: false
-              message: 요청 값이 유효하지 않습니다.
-=======
       401:
         description: 인증 실패 (토큰 없음 또는 유효하지 않음)
         content:
@@ -428,4 +411,3 @@
           application/json:
             schema:
               $ref: '#/components/schemas/ErrorResponse'
->>>>>>> Stashed changes
