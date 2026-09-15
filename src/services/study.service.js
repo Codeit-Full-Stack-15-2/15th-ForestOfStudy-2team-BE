@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '#src/errors/internal-server-error.exception.js';
 import { NotFoundException } from '#src/errors/not-found-exception.js';
 import { UnauthorizedException } from '#src/errors/unauthorized-exception.js';
 import * as studyRepository from '#src/repositories/study.repository.js';
@@ -38,8 +39,24 @@ export const verifyPasswordService = async (studyId, inputPassword) => {
   return { verified: true, token };
 };
 
+export const getStudiesService = async (keyword, orderBy, page, pageSize) => {
+  const { studies, totalCount } = await studyRepository.findStudies(
+    keyword,
+    orderBy,
+    page,
+    pageSize,
+  );
+
+  return { studies, totalCount };
+};
+
 export const getStudyService = async (studyId) => {
   const study = await studyRepository.findStudyById(studyId);
+
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
   return {
     id: study.id,
     nickname: study.nickname,
@@ -66,6 +83,12 @@ export const handleReactionToggleService = async (studyId, body) => {
     const softDeleted = await studyRepository.softDeleteReaction(
       existingReaction.id,
     );
+
+    if (!softDeleted) {
+      throw new InternalServerErrorException(
+        ERROR_MESSAGES.REACTION_DELETE_FAILED,
+      );
+    }
     return { action: 'deleted', reaction: softDeleted };
   }
 
@@ -83,10 +106,14 @@ export const deleteStudyService = async (studyId) => {
   const study = await studyRepository.findActiveStudyOnly(studyId);
 
   if (!study) {
-    throw new NotFoundException('존재하지 않거나 이미 삭제된 스터디입니다.');
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
   }
 
   const softDeleted = await studyRepository.updateStudyDeletedAt(studyId);
+
+  if (!softDeleted) {
+    throw new InternalServerErrorException(ERROR_MESSAGES.STUDY_DELETE_FAILED);
+  }
 
   return {
     id: softDeleted.id,
@@ -97,6 +124,26 @@ export const deleteStudyService = async (studyId) => {
     point: softDeleted.point,
     createdAt: softDeleted.createdAt,
     reactions: softDeleted.reactions,
+  };
+};
+
+export const updateStudyService = async (studyId, updateData) => {
+  const study = await studyRepository.findStudyById(studyId);
+
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
+  const updatedStudy = await studyRepository.updateStudyRecord(
+    studyId,
+    updateData,
+  );
+
+  return {
+    nickname: updatedStudy.nickname,
+    title: updatedStudy.title,
+    description: updatedStudy.description,
+    background: updatedStudy.background,
   };
 };
 
@@ -121,5 +168,14 @@ export const addPointService = async (studyId, minutes) => {
     add_point: addPoint,
     prev_point: prevPoint,
     total_point: updated.point,
+  };
+};
+
+export const checkNicknameAvailabilityService = async (nickname) => {
+  const existingStudy =
+    await studyRepository.findActiveStudyByNickname(nickname);
+
+  return {
+    available: !existingStudy,
   };
 };

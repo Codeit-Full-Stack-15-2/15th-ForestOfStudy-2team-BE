@@ -13,6 +13,99 @@ export const createStudyRecord = async (data) => {
   });
 };
 
+export const findStudies = async (keyword, orderBy, page, pageSize) => {
+  const searchCondition = keyword
+    ? {
+        OR: [
+          {
+            title: {
+              contains: keyword,
+            },
+          },
+          {
+            nickname: {
+              contains: keyword,
+            },
+          },
+        ],
+      }
+    : {};
+
+  let sortCondition;
+
+  if (orderBy === 'latest') {
+    sortCondition = { createdAt: 'desc' };
+  } else if (orderBy === 'oldest') {
+    sortCondition = { createdAt: 'asc' };
+  } else if (orderBy === 'highPoints') {
+    sortCondition = { point: 'desc' };
+  } else if (orderBy === 'lowPoints') {
+    sortCondition = { point: 'asc' };
+  }
+
+  const skip = (page - 1) * pageSize;
+
+  const studies = await prisma.study.findMany({
+    where: {
+      deletedAt: null,
+      ...searchCondition,
+    },
+    orderBy: sortCondition,
+    skip,
+    take: pageSize,
+    select: {
+      id: true,
+      nickname: true,
+      title: true,
+      description: true,
+      background: true,
+      point: true,
+      createdAt: true,
+    },
+  });
+
+  const studyIds = studies.map((study) => study.id);
+
+  const reactionGroups = await prisma.studyReaction.groupBy({
+    by: ['studyId', 'emoji'],
+    where: {
+      studyId: {
+        in: studyIds,
+      },
+      deletedAt: null,
+    },
+
+    _count: {
+      emoji: true,
+    },
+  });
+
+  const studiesWithEmoji = studies.map((study) => {
+    const studyReactions = reactionGroups.filter(
+      (group) => group.studyId === study.id,
+    );
+
+    const emoji = studyReactions.map((reaction) => ({
+      emoji: reaction.emoji,
+      count: reaction._count.emoji,
+    }));
+
+    return {
+      ...study,
+      emoji,
+    };
+  });
+
+  const totalCount = await prisma.study.count({
+    where: {
+      deletedAt: null,
+      ...searchCondition,
+    },
+  });
+
+  return { studies: studiesWithEmoji, totalCount };
+};
+
 export const findStudyById = async (studyId) => {
   const numericId = Number(studyId);
 
@@ -112,6 +205,22 @@ export const updateStudyDeletedAt = async (studyId) => {
   return study;
 };
 
+export const updateStudyRecord = async (studyId, updateData) => {
+  const numericId = Number(studyId);
+
+  return await prisma.study.update({
+    where: {
+      id: numericId,
+    },
+    data: {
+      nickname: updateData.nickname,
+      title: updateData.title,
+      description: updateData.description,
+      background: updateData.background,
+    },
+  });
+};
+
 export const findActiveStudyWithPoint = async (studyId) => {
   return prisma.study.findFirst({
     where: { id: Number(studyId), deletedAt: null },
@@ -126,4 +235,16 @@ export const updateStudyPoint = async (studyId, point) => {
   });
 
   return study;
+};
+
+export const findActiveStudyByNickname = async (nickname) => {
+  return await prisma.study.findFirst({
+    where: {
+      nickname,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+    },
+  });
 };
