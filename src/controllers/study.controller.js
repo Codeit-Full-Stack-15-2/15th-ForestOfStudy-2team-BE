@@ -34,49 +34,37 @@ export const createStudy = async (req, res, next) => {
   }
 };
 
-export const verifyStudyPassword = async (req, res, next) => {
-  try {
-    const { study_id } = req.validated.params;
-    const { study_password } = req.validated.body;
-    const { token } = await studyService.verifyPasswordService(
-      study_id,
-      study_password,
-    );
+export const verifyStudyPassword = async (req, res) => {
+  const { study_id } = req.validated.params;
+  const { study_password } = req.validated.body;
+  const { token } = await studyService.verifyPasswordService(
+    study_id,
+    study_password,
+  );
 
-    res.status(HTTP_STATUS.OK).json({
-      success: true,
-      data: { token },
-      message: '비밀번호가 확인되었습니다.',
-    });
-  } catch (error) {
-    next(error);
-  }
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: { token },
+    message: '비밀번호가 확인되었습니다.',
+  });
 };
 
-export const verifyToken = (req, res, next) => {
-  try {
-    res.status(HTTP_STATUS.OK).json({
-      success: true,
-      data: { studyId: req.studyId },
-      message: '유효한 토큰입니다.',
-    });
-  } catch (error) {
-    next(error);
-  }
+export const verifyToken = (req, res) => {
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: { studyId: req.studyId },
+    message: '유효한 토큰입니다.',
+  });
 };
 
-export const getStudy = async (req, res, next) => {
-  try {
-    const studyId = req.validated.params.study_id;
-    const study = await studyService.getStudyService(studyId);
-    res.status(HTTP_STATUS.OK).json({
-      success: true,
-      data: study,
-      message: '스터디 정보 조회에 성공했습니다.',
-    });
-  } catch (error) {
-    next(error);
-  }
+export const getStudy = async (req, res) => {
+  const studyId = req.validated.params.study_id;
+  const study = await studyService.getStudyService(studyId);
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: study,
+    message: '스터디 정보 조회에 성공했습니다.',
+  });
 };
 
 export const updateStudy = async (req, res) => {
@@ -106,35 +94,27 @@ export const updatePoints = async (req, res) => {
   });
 };
 
-export const deleteStudy = async (req, res, next) => {
-  try {
-    const studyId = req.validated.params.study_id;
-    const study = await studyService.deleteStudyService(studyId);
+export const deleteStudy = async (req, res) => {
+  const studyId = req.validated.params.study_id;
+  const study = await studyService.deleteStudyService(studyId);
 
-    res.status(HTTP_STATUS.OK).json({
-      success: true,
-      data: study,
-      message: '스터디 삭제에 성공했습니다.',
-    });
-  } catch (error) {
-    next(error);
-  }
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: study,
+    message: '스터디 삭제에 성공했습니다.',
+  });
 };
 
 export const createReaction = async (req, res, next) => {
-  try {
-    const studyId = req.validated.params.study_id;
-    const body = req.validated.body;
-    const reaction = await studyService.handleReactionToggleService(
-      studyId,
-      body,
-    );
-    res.status(HTTP_STATUS.CREATE).json({
-      success: true,
-      data: reaction,
-      message: '리액션이 생성되었습니다.',
-    });
-  } catch (error) {
-    next(error);
-  }
+  const studyId = req.validated.params.study_id;
+  const body = req.validated.body;
+  const reaction = await studyService.handleReactionToggleService(
+    studyId,
+    body,
+  );
+  res.status(HTTP_STATUS.CREATE).json({
+    success: true,
+    data: reaction,
+    message: '리액션이 생성되었습니다.',
+  });
 };
