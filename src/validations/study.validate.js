@@ -96,7 +96,7 @@ export const updateStudySchema = z.object({
 });
 
 export const getWeeklyHabitRecordsQuerySchema = studyIdSchema.extend({
-  start_date: z
+  target_date: z
     .string({ required_error: 'startDate는 필수 입력값입니다.' })
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'startDate는 YYYY-MM-DD 형식이어야 합니다.'),
 });

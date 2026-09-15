@@ -13,9 +13,15 @@ export const createHabit = async (studyId, titles) => {
 };
 
 export const findHabits = async (studyId, startDate, endDate) => {
-  const recordWhere = { deletedAt: null };
+  const recordWhere = {};
   if (startDate) recordWhere.gte = new Date(startDate);
   if (endDate) recordWhere.lte = new Date(endDate);
+
+  const recordsWhereClause = {};
+
+  if (Object.keys(recordWhere).length > 0) {
+    recordsWhereClause.recordDate = recordWhere;
+  }
 
   return await prisma.habit.findMany({
     where: {
@@ -25,9 +31,9 @@ export const findHabits = async (studyId, startDate, endDate) => {
     include: {
       records: {
         where:
-          Object.keys(recordWhere).length > 1
-            ? { recordDate: recordWhere, deletedAt: null }
-            : { deletedAt: null },
+          Object.keys(recordsWhereClause).length > 0
+            ? recordsWhereClause
+            : undefined,
       },
     },
   });
