@@ -64,6 +64,38 @@ export const findStudies = async (keyword, orderBy, page, pageSize) => {
     },
   });
 
+  const studyIds = studies.map((study) => study.id);
+
+  const reactionGroups = await prisma.studyReaction.groupBy({
+    by: ['studyId', 'emoji'],
+    where: {
+      studyId: {
+        in: studyIds,
+      },
+      deletedAt: null,
+    },
+
+    _count: {
+      emoji: true,
+    },
+  });
+
+  const studiesWithEmoji = studies.map((study) => {
+    const studyReactions = reactionGroups.filter(
+      (group) => group.studyId === study.id,
+    );
+
+    const emoji = studyReactions.map((reaction) => ({
+      emoji: reaction.emoji,
+      count: reaction._count.emoji,
+    }));
+
+    return {
+      ...study,
+      emoji,
+    };
+  });
+
   const totalCount = await prisma.study.count({
     where: {
       deletedAt: null,
@@ -71,7 +103,7 @@ export const findStudies = async (keyword, orderBy, page, pageSize) => {
     },
   });
 
-  return { studies, totalCount };
+  return { studies: studiesWithEmoji, totalCount };
 };
 
 export const findStudyById = async (studyId) => {
