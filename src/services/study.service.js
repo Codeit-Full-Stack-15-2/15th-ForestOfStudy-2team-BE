@@ -39,7 +39,7 @@ export const verifyPasswordService = async (studyId, inputPassword) => {
 };
 
 export const getStudiesService = async (keyword, orderBy, page, pageSize) => {
-  return await studyRepository.findStudies(keyword,orderBy, page, pageSize);
+  return await studyRepository.findStudies(keyword, orderBy, page, pageSize);
 };
 
 export const getStudyService = async (studyId) => {
@@ -145,5 +145,14 @@ export const addPointService = async (studyId, minutes) => {
     add_point: addPoint,
     prev_point: prevPoint,
     total_point: updated.point,
+  };
+};
+
+export const checkNicknameAvailabilityService = async (nickname) => {
+  const existingStudy =
+    await studyRepository.findActiveStudyByNickname(nickname);
+
+  return {
+    available: !existingStudy,
   };
 };

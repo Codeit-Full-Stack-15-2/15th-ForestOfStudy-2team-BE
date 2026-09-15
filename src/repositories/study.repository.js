@@ -204,3 +204,15 @@ export const updateStudyPoint = async (studyId, point) => {
 
   return study;
 };
+
+export const findActiveStudyByNickname = async (nickname) => {
+  return await prisma.study.findFirst({
+    where: {
+      nickname,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+    },
+  });
+};

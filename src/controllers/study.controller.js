@@ -138,3 +138,17 @@ export const createReaction = async (req, res, next) => {
     next(error);
   }
 };
+
+export const checkNicknameAvailability = async (req, res) => {
+  const { nickname } = req.validated.query;
+
+  const result = await studyService.checkNicknameAvailabilityService(nickname);
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: result,
+    message: result.available
+      ? '사용 가능한 닉네임입니다.'
+      : '이미 사용 중인 닉네임입니다.',
+  });
+};
