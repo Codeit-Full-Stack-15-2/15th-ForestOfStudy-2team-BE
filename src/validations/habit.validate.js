@@ -47,14 +47,14 @@ export const habitIdSchema = z.object({
 });
 
 export const habitRecordSchema = z.object({
-  study_id: z
-    .string()
-    .regex(/^\d+$/, '스터디 ID는 숫자 형태여야 합니다.')
-    .transform((val) => Number(val)),
-  habit_id: z
-    .string()
-    .regex(/^\d+$/, '습관 ID는 숫자 형태여야 합니다.')
-    .transform((val) => Number(val)),
+  study_id: z.coerce
+    .number({ invalid_type_error: '스터디 ID는 숫자여야 합니다.' })
+    .int('스터디 ID는 정수여야 합니다.')
+    .positive('스터디 ID는 양수여야 합니다.'),
+  habit_id: z.coerce
+    .number({ invalid_type_error: '습관 ID는 숫자여야 합니다.' })
+    .int('습관 ID는 정수여야 합니다.')
+    .positive('습관 ID는 양수여야 합니다.'),
 });
 
 export const toggleHabitRecordSchema = z.object({
@@ -62,10 +62,6 @@ export const toggleHabitRecordSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, '날짜 형식은 YYYY-MM-DD 이어야 합니다.')
     .optional(),
-  isComplete: z.boolean({
-    required_error: 'isComplete(완료 여부)는 필수값입니다.',
-    invalid_type_error: 'isComplete는 boolean(true/false) 형태여야 합니다.',
-  }),
 });
 
 export const deleteHabitsSchema = z.object({
@@ -81,7 +77,6 @@ export const deleteHabitsSchema = z.object({
     )
     .min(1, '삭제할 습관을 최소 하나 이상 선택해 주세요.'),
 });
-
 
 export const getWeeklyHabitRecordsQuerySchema = z.object({
   page: z.coerce

@@ -39,22 +39,23 @@ export const updateHabits = async (req, res) => {
   });
 };
 
-export const toggleHabbitRecord = async (req, res) => {
+export const toggleHabitRecord = async (req, res) => {
   const { habit_id: habitId } = req.validated.params;
-  const { isComplete, recordDate } = req.validated.body;
+  const { recordDate } = req.validated.body;
 
   const targetDate = recordDate || new Date().toISOString().split('T')[0];
 
   const updateRecord = await habitService.toggleHabitRecordService(
     habitId,
     targetDate,
-    isComplete,
   );
+
+  const isCompleted = updateRecord.deletedAt === null;
 
   res.status(HTTP_STATUS.OK).json({
     success: true,
     data: updateRecord,
-    message: isComplete ? '습관을 완료했습니다.' : '습관 완료를 취소했습니다.',
+    message: isCompleted ? '습관을 완료했습니다.' : '습관 완료를 취소했습니다.',
   });
 };
 

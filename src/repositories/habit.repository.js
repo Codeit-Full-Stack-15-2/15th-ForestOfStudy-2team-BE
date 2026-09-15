@@ -13,7 +13,7 @@ export const createHabit = async (studyId, titles) => {
 };
 
 export const findHabits = async (studyId, startDate, endDate) => {
-  const recordWhere = {};
+  const recordWhere = { deletedAt: null };
   if (startDate) recordWhere.gte = new Date(startDate);
   if (endDate) recordWhere.lte = new Date(endDate);
 
@@ -25,9 +25,9 @@ export const findHabits = async (studyId, startDate, endDate) => {
     include: {
       records: {
         where:
-          Object.keys(recordWhere).length > 0
-            ? { recordDate: recordWhere }
-            : undefined,
+          Object.keys(recordWhere).length > 1
+            ? { recordDate: recordWhere, deletedAt: null }
+            : { deletedAt: null },
       },
     },
   });
@@ -56,6 +56,22 @@ export const updateHabits = async (habitsData) => {
   return updatedHabits;
 };
 
+export const softDeleteRecordsByHabitIdsAndDate = async (
+  habitIds,
+  recordDate,
+) => {
+  return await prisma.habitRecord.updateMany({
+    where: {
+      habitId: { in: habitIds.map((id) => Number(id)) },
+      recordDate: new Date(recordDate),
+      deletedAt: null,
+    },
+    data: {
+      deletedAt: new Date(),
+    },
+  });
+};
+
 export const removehabits = async (habitIds) => {
   return await prisma.habit.updateMany({
     where: { id: { in: habitIds.map((id) => Number(id)) }, deletedAt: null },
@@ -63,22 +79,39 @@ export const removehabits = async (habitIds) => {
   });
 };
 
-export const toggleHabitRecord = async (habitId, recordDate, isComplete) => {
+export const toggleHabitRecord = async (habitId, recordDate) => {
+  const numHabitId = Number(habitId);
   const formattedDate = new Date(recordDate);
 
-  return await prisma.habitRecord.upsert({
+  const existingRecord = await prisma.habitRecord.findUnique({
     where: {
       habitId_recordDate: {
-        habitId: Number(habitId),
+        habitId: numHabitId,
         recordDate: formattedDate,
       },
     },
-    update: { isComplete },
-    create: {
-      habitId: Number(habitId),
-      recordDate: formattedDate,
-      isComplete,
-    },
+  });
+
+  // 1) 기록이 없으면 생성 (체크 완료)
+  if (!existingRecord) {
+    return await prisma.habitRecord.create({
+      data: {
+        habitId: numHabitId,
+        recordDate: formattedDate,
+      },
+    });
+  }
+  // 해제된 상태면 null로 복구 (체크 완료)
+  if (existingRecord.deletedAt !== null) {
+    return await prisma.habitRecord.update({
+      where: { id: existingRecord.id },
+      data: { deletedAt: null },
+    });
+  }
+  // 3) 체크된 상태면 deletedAt 업데이트 (체크 해제)
+  return await prisma.habitRecord.update({
+    where: { id: existingRecord.id },
+    data: { deleteAt: new Date() },
   });
 };
 

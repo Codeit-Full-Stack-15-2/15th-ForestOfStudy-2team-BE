@@ -17,12 +17,12 @@ export const createHabitsService = async (studyId, titles) => {
     where: {
       studyId: Number(studyId),
       title: { in: titles },
+      deletedAt: null,
     },
     select: { title: true },
   });
 
   if (existingHabits.length > 0) {
-    const duplicatedTitles = existingHabits.map((h) => h.title).join(', ');
     throw new ConflictException(ERROR_MESSAGES.HABIT_ALREADY_EXISTS);
   }
 
@@ -56,16 +56,17 @@ export const getHabitsService = async (studyId, targetDate) => {
 
   return habits.map((habit) => {
     const todayRecord = habit.records?.[0];
+    const isCompleted = Boolean(todayRecord && todayRecord.deletedAt === null);
     return {
       id: habit.id,
       studyId: habit.studyId,
       title: habit.title,
       createdAt: habit.createdAt,
-      isComplete: todayRecord ? todayRecord.isComplete : false,
+      isComplete: isCompleted,
       records: habit.records.map((record) => ({
         id: record.id,
         recordDate: record.recordDate,
-        isComplete: record.isComplete,
+        isComplete: record.isComplete === null,
       })),
     };
   });
@@ -106,10 +107,13 @@ export const updateHabitsService = async (studyId, habitsData) => {
   await habitRepository.updateHabits(habitsData);
 
   //습관 일관 수정
-  const updateHabits = await habitRepository.findHabitsByIds(habitIds);
+  const today = new Date().toISOString().split('T')[0];
+  await habitRepository.softDeleteRecordsByHabitIdsAndDate(habitIds, today);
 
   // 수정된 최신 습관 목록 다시 조회하여 반환
-  return updateHabits;
+  const updatedHabits = await habitRepository.findHabitsByIds(habitIds);
+
+  return updatedHabits;
 };
 
 export const toggleHabitRecordService = async (

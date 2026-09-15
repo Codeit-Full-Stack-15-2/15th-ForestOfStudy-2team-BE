@@ -120,12 +120,11 @@ studyRoute.patch(
   '/:study_id/habits/:habit_id/records',
   validateParams(habitRecordSchema),
   validateBody(toggleHabitRecordSchema),
-  habitController.toggleHabbitRecord,
+  habitController.toggleHabitRecord,
 );
 
 studyRoute.delete(
-  '/:study_id/habits/:study_id/habits',
-  validateParams(studyIdSchema),
+  '/:study_id/habits',
   validateParams(studyIdSchema),
   validateBody(deleteHabitsSchema),
   habitController.deleteHabits,
