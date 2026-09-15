@@ -63,18 +63,20 @@ export const removehabits = async (habitIds) => {
   });
 };
 
-export const upsertHabitRecord = async (habitId, recordDate, isComplete) => {
+export const toggleHabitRecord = async (habitId, recordDate, isComplete) => {
+  const formattedDate = new Date(recordDate);
+
   return await prisma.habitRecord.upsert({
     where: {
       habitId_recordDate: {
         habitId: Number(habitId),
-        recordDate: new Date(recordDate),
+        recordDate: formattedDate,
       },
     },
     update: { isComplete },
     create: {
       habitId: Number(habitId),
-      recordDate: new Date(recordDate),
+      recordDate: formattedDate,
       isComplete,
     },
   });

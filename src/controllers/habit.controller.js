@@ -3,7 +3,7 @@ import { HTTP_STATUS } from '../constants/index.js';
 
 export const getHabits = async (req, res) => {
   const { study_id: studyId } = req.validated.params;
-  const { date } = req.validated.params || req.query;
+  const date = req.validated.query?.date || req.query?.date;
 
   const habits = await habitService.getHabitsService(studyId, date);
 
@@ -30,12 +30,31 @@ export const updateHabits = async (req, res) => {
   const { study_id: studyId } = req.validated.params;
   const { habits } = req.validated.body;
 
-  const updateHabits = await habitService.updateHabitsService(studyId, habits);
+  const updatedHabits = await habitService.updateHabitsService(studyId, habits);
 
   res.status(HTTP_STATUS.OK).json({
     success: true,
-    data: updateHabits,
-    message: '습관을 성공적으로 수정했습니다.',
+    data: updatedHabits,
+    message: '습관 정보가 수정되었습니다.',
+  });
+};
+
+export const toggleHabbitRecord = async (req, res) => {
+  const { habit_id: habitId } = req.validated.params;
+  const { isComplete, recordDate } = req.validated.body;
+
+  const targetDate = recordDate || new Date().toISOString().split('T')[0];
+
+  const updateRecord = await habitService.toggleHabitRecordService(
+    habitId,
+    targetDate,
+    isComplete,
+  );
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: updateRecord,
+    message: isComplete ? '습관을 완료했습니다.' : '습관 완료를 취소했습니다.',
   });
 };
 

@@ -22,9 +22,7 @@ export const createHabitsService = async (studyId, titles) => {
 
   if (existingHabits.length > 0) {
     const duplicatedTitles = existingHabits.map((h) => h.title).join(', ');
-    throw new ConflictException(
-      ERROR_MESSAGES.HABIT_ALREADY_EXISTS(duplicatedTitles),
-    );
+    throw new ConflictException(ERROR_MESSAGES.HABIT_ALREADY_EXISTS);
   }
 
   const newHabits = await habitRepository.createHabit(Number(studyId), titles);
@@ -41,6 +39,7 @@ export const getHabitsService = async (studyId, targetDate) => {
   const baseDate = targetDate ? new Date(targetDate) : new Date();
   const startDate = new Date(baseDate);
   startDate.setHours(0, 0, 0, 0);
+
   const endDate = new Date(baseDate);
   endDate.setHours(23, 59, 59, 999);
 
@@ -54,29 +53,39 @@ export const getHabitsService = async (studyId, targetDate) => {
     return [];
   }
 
-  return habits.map((habit) => ({
-    id: habit.id,
-    studyId: habit.studyId,
-    title: habit.title,
-    createdAt: habit.createdAt,
-    records: habit.records.map((record) => ({
-      id: record.id,
-      recordDate: record.recordDate,
-      isComplete: record.isComplete,
-    })),
-  }));
+  return habits.map((habit) => {
+    const todayRecord = habit.records?.[0];
+    return {
+      id: habit.id,
+      studyId: habit.studyId,
+      title: habit.title,
+      createdAt: habit.createdAt,
+      isComplete: todayRecord ? todayRecord.isComplete : false,
+      records: habit.records.map((record) => ({
+        id: record.id,
+        recordDate: record.recordDate,
+        isComplete: record.isComplete,
+      })),
+    };
+  });
 };
 
 export const updateHabitsService = async (studyId, habitsData) => {
-  const study = await studyRepository.findStudyById(studyId);
+  const numericStudyId = Number(studyId);
+
+  const study = await studyRepository.findStudyById(numericStudyId);
 
   // 스터디 존재 여부 확인
   if (!study) {
     throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
   }
 
+  const formattedHabitsData = habitsData.map((h) => ({
+    id: Number(h.id),
+    title: h.title,
+  }));
   //수정 대상 습관들이 해당 스터디에 실제 속해있는지 확인
-  const habitIds = habitsData.map((h) => Number(h.id));
+  const habitIds = formattedHabitsData.map((h) => Number(h.id));
   const existingHabits = await habitRepository.findHabitsByIds(habitIds);
 
   if (existingHabits.length !== habitsData.length) {
@@ -100,6 +109,25 @@ export const updateHabitsService = async (studyId, habitsData) => {
 
   // 수정된 최신 습관 목록 다시 조회하여 반환
   return updateHabits;
+};
+
+export const toggleHabitRecordService = async (
+  habitId,
+  targetDate,
+  isComplete,
+) => {
+  const habit = await habitRepository.findHabitsByIds([Number(habitId)]);
+  if (!habit || habit.length === 0) {
+    throw new NotFoundException(ERROR_MESSAGES.HABIT_NOT_FOUND);
+  }
+
+  const updatedRecord = await habitRepository.toggleHabitRecord(
+    Number(habitId),
+    targetDate,
+    isComplete,
+  );
+
+  return updatedRecord;
 };
 
 export const deleteHabitsService = async (studyId, habitIds) => {

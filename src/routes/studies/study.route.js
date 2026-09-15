@@ -18,6 +18,8 @@ import {
   createHabitSchema,
   updateHabitsSchema,
   deleteHabitsSchema,
+  habitRecordSchema,
+  toggleHabitRecordSchema,
 } from '#src/validations/habit.validate.js';
 import { Router } from 'express';
 export const studyRoute = Router();
@@ -97,6 +99,13 @@ studyRoute.patch(
   validateBody(updateHabitsSchema),
   habitController.updateHabits,
 ); // 오늘의 습관 수정
+
+studyRoute.patch(
+  '/:study_id/habits/:habit_id/records',
+  validateParams(habitRecordSchema),
+  validateBody(toggleHabitRecordSchema),
+  habitController.toggleHabbitRecord,
+);
 
 studyRoute.delete(
   '/:study_id/habits',

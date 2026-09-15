@@ -7,7 +7,7 @@ export const createHabitSchema = z.object({
         .string({ required_error: '습관은 필수 입력 항목입니다.' })
         .trim()
         .min(1, '습관은 비워둘 수 없습니다.')
-        .max(20, '습관은 20자 이하여야 합니다.'),
+        .max(15, '습관은 15자 이하여야 합니다.'),
     )
     .min(1, '최소 하나 이상의 습관을 입력해야 합니다.')
     .refine(
@@ -29,7 +29,7 @@ export const updateHabitsSchema = z.object({
         title: z
           .string({ required_error: '습관은 필수 입력 항목입니다.' })
           .min(1, '습관은 비워둘 수 없습니다.')
-          .max(20, '습관은 20자 이하여야 합니다.'),
+          .max(15, '습관은 15자 이하여야 합니다.'),
       }),
     )
     .min(1, '수정할 습관이 최소 1개 이상이어야 합니다.'),
@@ -44,6 +44,28 @@ export const habitIdSchema = z.object({
       message: '습관 아이디는 정수여야 합니다.',
     })
     .positive('습관 아이디는 양수여야 합니다.'),
+});
+
+export const habitRecordSchema = z.object({
+  study_id: z
+    .string()
+    .regex(/^\d+$/, '스터디 ID는 숫자 형태여야 합니다.')
+    .transform((val) => Number(val)),
+  habit_id: z
+    .string()
+    .regex(/^\d+$/, '습관 ID는 숫자 형태여야 합니다.')
+    .transform((val) => Number(val)),
+});
+
+export const toggleHabitRecordSchema = z.object({
+  recordDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, '날짜 형식은 YYYY-MM-DD 이어야 합니다.')
+    .optional(),
+  isComplete: z.boolean({
+    required_error: 'isComplete(완료 여부)는 필수값입니다.',
+    invalid_type_error: 'isComplete는 boolean(true/false) 형태여야 합니다.',
+  }),
 });
 
 export const deleteHabitsSchema = z.object({
