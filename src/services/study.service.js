@@ -170,3 +170,12 @@ export const addPointService = async (studyId, minutes) => {
     total_point: updated.point,
   };
 };
+
+export const checkNicknameAvailabilityService = async (nickname) => {
+  const existingStudy =
+    await studyRepository.findActiveStudyByNickname(nickname);
+
+  return {
+    available: !existingStudy,
+  };
+};

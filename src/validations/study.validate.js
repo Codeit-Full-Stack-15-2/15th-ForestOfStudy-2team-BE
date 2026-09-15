@@ -111,3 +111,10 @@ export const updatePointsSchema = z.object({
     })
     .min(25, { message: '집중 시간은 최소 25분 이상이어야 합니다.' }),
 });
+
+export const checkNicknameQuerySchema = z.object({
+  nickname: z
+    .string({ required_error: '닉네임은 필수 입력 항목입니다.' })
+    .min(1, '닉네임은 비워둘 수 없습니다.')
+    .max(10, '닉네임은 10자 이하여야 합니다.'),
+});

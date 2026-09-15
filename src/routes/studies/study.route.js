@@ -17,6 +17,7 @@ import {
   verifyPasswordSchema,
   updateStudySchema,
   updatePointsSchema,
+  checkNicknameQuerySchema,
 } from '#src/validations/study.validate.js';
 import { getWeeklyHabitRecordsQuerySchema } from '#src/validations/habit.validate.js';
 import { Router } from 'express';
@@ -106,3 +107,9 @@ studyRoute.get(
   validateQuery(getWeeklyHabitRecordsQuerySchema),
   habitController.getWeeklyHabitRecords,
 ); // 주단위 습관 기록 조회
+
+studyRoute.get(
+  '/nickname/check',
+  validateQuery(checkNicknameQuerySchema),
+  studyController.checkNicknameAvailability,
+); // 닉네임 중복 확인
