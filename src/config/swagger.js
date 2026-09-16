@@ -1,10 +1,6 @@
 import path from 'path';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const options = {
   definition: {
@@ -23,9 +19,10 @@ const options = {
       },
     ],
   },
+  // Vercel 런타임 환경과 로컬 환경을 모두 엄격하게 커버하는 절대 경로
   apis: [
     path.join(process.cwd(), 'src/swagger/docs/**/*.yaml'),
-    path.join(__dirname, '../swagger/docs/**/*.yaml'),
+    path.join(process.cwd(), 'src/swagger/docs/*/*.yaml'),
   ],
 };
 
