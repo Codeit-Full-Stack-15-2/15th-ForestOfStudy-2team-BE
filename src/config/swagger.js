@@ -11,26 +11,20 @@ const getYamlDocs = () => {
 
   try {
     if (fs.existsSync(docsDir)) {
-      // recursive: true 옵션으로 하위 폴더까지 모든 파일 탐색
+      // 재귀적으로 모든 YAML 파일 탐색
       const files = fs.readdirSync(docsDir, { recursive: true });
 
       files.forEach((file) => {
-        const fileString = String(file); // Buffer 대비 문자열 형변환
+        const fileString = String(file);
         if (fileString.endsWith('.yaml') || fileString.endsWith('.yml')) {
           const filePath = path.join(docsDir, fileString);
           const content = fs.readFileSync(filePath, 'utf8');
           const parsed = YAML.parse(content);
 
           if (parsed) {
-            // 1. paths 매핑
+            // 1. paths 매핑: 모든 YAML에 paths 키가 보장되므로 단 한 줄로 병합
             if (parsed.paths) {
               Object.assign(combinedPaths, parsed.paths);
-            } else {
-              Object.keys(parsed).forEach((key) => {
-                if (key.startsWith('/')) {
-                  combinedPaths[key] = parsed[key];
-                }
-              });
             }
 
             // 2. components 매핑
