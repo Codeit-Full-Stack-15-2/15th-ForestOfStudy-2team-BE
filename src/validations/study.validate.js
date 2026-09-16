@@ -20,7 +20,8 @@ export const createStudySchema = z.object({
 
   study_password: z
     .string({ required_error: '비밀번호는 필수 입력 항목입니다.' })
-    .min(1, '비밀번호를 입력해주세요.'),
+    .min(4, '비밀번호는 최소 4글자 이상이어야 합니다.')
+    .max(64, '비밀번호는 최대 64글자까지 허용됩니다.'),
 
   point: z
     .number()
@@ -32,7 +33,8 @@ export const createStudySchema = z.object({
 export const verifyPasswordSchema = z.object({
   study_password: z
     .string({ required_error: '비밀번호는 필수 입력값입니다.' })
-    .min(4, { message: '비밀번호는 최소 4글자 이상이어야 합니다.' }),
+    .min(4, { message: '비밀번호는 최소 4글자 이상이어야 합니다.' })
+    .max(64, { message: '비밀번호는 최대 64글자까지 허용됩니다.' }),
 });
 
 export const studyIdSchema = z.object({
