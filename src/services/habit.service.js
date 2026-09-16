@@ -150,10 +150,14 @@ export const deleteHabitsService = async (studyId, habitIds) => {
     );
   }
 
-  const result = await habitRepository.removehabits(targetHabitIds);
+  const result = await habitRepository.removehabits(
+    Number(studyId),
+    targetHabitIds,
+  );
 
+  // $transaction 배열 결과이므로 result[0].count가 습관 삭제 개수
   return {
-    deletedCount: result.count,
+    deletedCount: result[0].count,
   };
 };
 
