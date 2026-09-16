@@ -1,5 +1,9 @@
+import path from 'path';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
+
+// process.cwd() 기반의 절대 경로 생성
+const docsDir = path.join(process.cwd(), 'src/swagger/docs');
 
 const options = {
   definition: {
@@ -18,7 +22,11 @@ const options = {
       },
     ],
   },
-  apis: ['src/swagger/docs/**/*.yaml', 'src/swagger/docs/**/*.yml'],
+  // 하위 폴더(studies 등)의 YAML 파일까지 절대 경로 와일드카드로 매핑
+  apis: [
+    path.join('src/swagger/docs', '**/*.yaml'),
+    path.join('src/swagger/docs', '**/*.yml'),
+  ],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
