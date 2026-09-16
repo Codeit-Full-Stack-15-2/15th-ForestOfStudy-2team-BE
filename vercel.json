@@ -1,13 +1,7 @@
 {
   "functions": {
-    "api/index.js": {
-      "includeFiles": "node_modules/swagger-ui-express/**"
-    },
-    "src/server.js": {
-      "includeFiles": "node_modules/swagger-ui-express/**"
-    },
-    "**/*.js": {
-      "includeFiles": "{src/swagger/docs/**,node_modules/swagger-ui-express/**}"
+    "api/**/*.js": {
+      "includeFiles": "src/swagger/docs/**"
     }
   }
 }
