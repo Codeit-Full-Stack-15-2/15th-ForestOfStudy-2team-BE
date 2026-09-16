@@ -4,7 +4,7 @@ import cors from 'cors';
 import express from 'express';
 import { isDevelopment } from './config/config.js';
 import { router } from './routes/index.js';
-import { swaggerUI,swaggerSpec } from '#src/swagger/swagger.js';
+import { swaggerUI, swaggerSpec } from '#src/swagger/swagger.js';
 
 const app = express();
 
