@@ -1,9 +1,57 @@
+import fs from 'fs';
 import path from 'path';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
+import YAML from 'yaml';
 
-// process.cwd() 기반의 절대경로를 적용하여 로컬/배포 모두에서 안정적인 위치 확보
-const swaggerDocsPath = path.join(process.cwd(), 'src/swagger/docs/**/*.yaml');
+const getYamlDocs = () => {
+  const docsDir = path.join(process.cwd(), 'src/swagger/docs');
+  const combinedPaths = {};
+  const combinedComponents = { schemas: {} };
+
+  try {
+    if (fs.existsSync(docsDir)) {
+      const files = fs.readdirSync(docsDir);
+      files.forEach((file) => {
+        if (file.endsWith('.yaml') || file.endsWith('.yml')) {
+          const filePath = path.join(docsDir, file);
+          const content = fs.readFileSync(filePath, 'utf8');
+          const parsed = YAML.parse(content);
+
+          if (parsed) {
+            // 1. paths 매핑: parsed.paths가 있으면 사용하고, 없으면 루트 키가 경로(/)인 것들을 병합
+            if (parsed.paths) {
+              Object.assign(combinedPaths, parsed.paths);
+            } else {
+              Object.keys(parsed).forEach((key) => {
+                if (key.startsWith('/')) {
+                  combinedPaths[key] = parsed[key];
+                }
+              });
+            }
+
+            // 2. components 매핑
+            if (parsed.components) {
+              if (parsed.components.schemas) {
+                Object.assign(
+                  combinedComponents.schemas,
+                  parsed.components.schemas,
+                );
+              }
+              Object.assign(combinedComponents, parsed.components);
+            }
+          }
+        }
+      });
+    }
+  } catch (err) {
+    console.error('YAML 파싱 실패:', err);
+  }
+
+  return { combinedPaths, combinedComponents };
+};
+
+const { combinedPaths, combinedComponents } = getYamlDocs();
 
 const options = {
   definition: {
@@ -21,13 +69,14 @@ const options = {
         description: 'API 서버',
       },
     ],
+    paths: combinedPaths,
+    components: combinedComponents,
   },
-  apis: [swaggerDocsPath],
+  apis: [],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 
-// Vercel 배포 환경 정적 파일 404 방지용 CDN 옵션
 const swaggerOptions = {
   customCssUrl:
     'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui.min.css',
