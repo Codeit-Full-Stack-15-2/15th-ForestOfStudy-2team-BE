@@ -41,4 +41,14 @@ const swaggerSpec = {
   },
 };
 
-export { swaggerSpec, swaggerUi };
+// Vercel 서버리스 환경 완벽 대응을 위한 CDN 옵션 구성
+const swaggerOptions = {
+  customCssUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-bundle.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-standalone-preset.js',
+  ],
+};
+
+export { swaggerOptions, swaggerSpec, swaggerUi };
