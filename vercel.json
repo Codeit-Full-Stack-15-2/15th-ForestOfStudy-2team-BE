@@ -1,7 +1,10 @@
 {
   "functions": {
     "**/*.js": {
-      "includeFiles": "src/swagger/docs/**"
+      "includeFiles": [
+        "src/swagger/docs/**",
+        "node_modules/swagger-ui-express/**"
+      ]
     }
   }
 }
