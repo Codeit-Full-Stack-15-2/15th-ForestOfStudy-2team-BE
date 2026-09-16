@@ -19,26 +19,19 @@ const options = {
       },
     ],
   },
-  // Vercel 런타임 환경과 로컬 환경을 모두 엄격하게 커버하는 절대 경로
-  apis: [
-    path.join(process.cwd(), 'src/swagger/docs/**/*.yaml'),
-    path.join(process.cwd(), 'src/swagger/docs/*/*.yaml'),
-  ],
+  apis: [path.join(process.cwd(), 'src/swagger/docs/**/*.yaml')],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 
+// CDN 경로를 unpkg의 가장 안정적인 버전으로 변경
 const swaggerOptions = {
-  customCssUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css',
+  customCssUrl: 'https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css',
   customJs: [
-    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-bundle.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-standalone-preset.js',
+    'https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js',
+    'https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js',
   ],
 };
-
-// 디버깅용: 파싱된 paths 목록 확인
-console.log('Parsed Swagger Paths:', Object.keys(swaggerSpec.paths || {}));
 
 export const swaggerUI = swaggerUi;
 export { swaggerOptions, swaggerSpec };
