@@ -1,0 +1,34 @@
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'ForestOfStudy',
+      description: '공부의 숲 API입니다',
+      version: '1.0.0',
+    },
+    servers: [
+      {
+        url: `http://localhost:${process.env.PORT || 5001}/api`,
+        description: '개발 서버',
+      },
+    ],
+  },
+  apis: ['./src/swagger/docs/**/*.yaml'],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+
+const swaggerOptions = {
+  customCssUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-bundle.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-standalone-preset.js',
+  ],
+};
+
+export const swaggerUI = swaggerUi;
+export { swaggerOptions, swaggerSpec };

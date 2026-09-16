@@ -1,16 +1,21 @@
 import { errorHandler } from '#src/middlewares/error-handler.middleware.js';
 import { logger } from '#src/middlewares/logger.js';
+import { swaggerSpec, swaggerUI } from '#src/swagger/swagger.js';
 import cors from 'cors';
 import express from 'express';
 import { isDevelopment } from './config/config.js';
+import { swaggerOptions } from './config/swagger.js';
 import { router } from './routes/index.js';
-import { swaggerUI, swaggerSpec } from '#src/swagger/swagger.js';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+app.use(
+  '/api-docs',
+  swaggerUI.serve,
+  swaggerUI.setup(swaggerSpec, swaggerOptions),
+);
 
 if (isDevelopment) {
   app.use(logger);
