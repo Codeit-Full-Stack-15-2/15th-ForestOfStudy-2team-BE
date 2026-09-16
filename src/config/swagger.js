@@ -28,13 +28,15 @@ const options = {
 
 const swaggerSpec = swaggerJSDoc(options);
 
-const swaggerOptions = {
-  customCssUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui.min.css',
-  customJs: [
-    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-bundle.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-standalone-preset.js',
-  ],
-};
+// const swaggerOptions = {
+//   customCssUrl:
+//     'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui.min.css',
+//   customJs: [
+//     'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-bundle.js',
+//     'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-standalone-preset.js',
+//   ],
+// };
 
-export { swaggerOptions, swaggerSpec, swaggerUI };
+// export { swaggerOptions, swaggerSpec, swaggerUI };
+
+export { swaggerSpec, swaggerUI };
