@@ -23,8 +23,10 @@ const options = {
       },
     ],
   },
-  // process.cwd() 기반 경로로 서버리스 실행 위치 추적
-  apis: [path.join(process.cwd(), 'src/swagger/docs/**/*.yaml')],
+  apis: [
+    path.join(process.cwd(), 'src/swagger/docs/**/*.yaml'),
+    path.join(__dirname, '../swagger/docs/**/*.yaml'),
+  ],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
