@@ -19,18 +19,10 @@ const options = {
       },
     ],
   },
+  // Vercel 런타임 환경 대응 절대 경로
   apis: [path.join(process.cwd(), 'src/swagger/docs/**/*.yaml')],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 
-const swaggerOptions = {
-  customCssUrl: 'https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css',
-  customJs: [
-    'https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js',
-    'https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-standalone-preset.js',
-  ],
-};
-
-// swaggerUi 객체 원본과 설정을 정석대로 export
-export { swaggerOptions, swaggerSpec, swaggerUi };
+export { swaggerSpec, swaggerUi };
