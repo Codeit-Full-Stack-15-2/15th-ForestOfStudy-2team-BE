@@ -23,7 +23,10 @@ const options = {
     ],
   },
   // 하위 폴더(studies 등)의 YAML 파일까지 절대 경로 와일드카드로 매핑
-  apis: [path.join(docsDir, '**/*.yaml'), path.join(docsDir, '**/*.yml')],
+  apis: [
+    path.join('src/swagger/docs', '**/*.yaml'),
+    path.join('src/swagger/docs', '**/*.yml'),
+  ],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
