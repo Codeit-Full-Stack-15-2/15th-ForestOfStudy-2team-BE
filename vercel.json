@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "functions": {
-    "src/server.js": {
-      "includeFiles": "src/swagger/docs/**"
-    }
-  },
   "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/src/server.js"
     }
-  ]
+  ],
+  "functions": {
+    "src/server.js": {
+      "includeFiles": "src/swagger/docs/**"
+    }
+  }
 }
