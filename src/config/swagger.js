@@ -19,7 +19,6 @@ const options = {
       },
     ],
   },
-  // Vercel 런타임 환경 대응 절대 경로
   apis: [path.join(process.cwd(), 'src/swagger/docs/**/*.yaml')],
 };
 

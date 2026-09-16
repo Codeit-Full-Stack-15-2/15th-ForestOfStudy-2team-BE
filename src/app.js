@@ -3,6 +3,7 @@ import { logger } from '#src/middlewares/logger.js';
 // import { swaggerUI } from '#src/swagger/swagger.js';
 import cors from 'cors';
 import express from 'express';
+import swaggerUiDist from 'swagger-ui-dist';
 import { isDevelopment } from './config/config.js';
 import { swaggerSpec, swaggerUi } from './config/swagger.js';
 import { router } from './routes/index.js';
@@ -11,6 +12,10 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+// swagger-ui-dist의 정적 파일들을 /api-docs 경로로 직접 서빙 (CDN 완전 제거)
+app.use('/api-docs', express.static(swaggerUiDist.getAbsoluteFSPath()));
+
+// Swagger UI 화면 렌더링
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 if (isDevelopment) {
