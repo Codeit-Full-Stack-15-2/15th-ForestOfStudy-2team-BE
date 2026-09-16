@@ -10,8 +10,13 @@ import {
   validateQuery,
 } from '#src/middlewares/validate.middleware.js';
 import {
+  createHabitSchema,
+  deleteHabitsSchema,
   getMonthlyHabitRecordsQuerySchema,
   getWeeklyHabitRecordsQuerySchema,
+  habitRecordSchema,
+  toggleHabitRecordSchema,
+  updateHabitsSchema,
 } from '#src/validations/habit.validate.js';
 import {
   checkNicknameQuerySchema,
@@ -38,13 +43,20 @@ studyRoute.post(
   studyController.createStudy,
 ); // 스터디 만들기
 
+studyRoute.get('/verify', verifyAccessToken, studyController.verifyToken);
+
+studyRoute.get(
+  '/:study_id/habits/records/weekly',
+  validateParams(studyIdSchema),
+  validateQuery(getWeeklyHabitRecordsQuerySchema),
+  habitController.getWeeklyHabitRecords,
+); // 주단위 습관 기록 조회
+
 studyRoute.get(
   '/:study_id',
   validateParams(studyIdSchema),
   studyController.getStudy,
 ); // 스터디 개별 조회
-
-studyRoute.get('/verify', verifyAccessToken, studyController.verifyToken);
 
 studyRoute.post(
   '/:study_id/verify',
@@ -86,30 +98,39 @@ studyRoute.patch(
   studyController.updatePoints,
 ); // 포인트 수정
 
-studyRoute.get('/', validateParams(studyIdSchema), habitController.getHabits); // 오늘의 습관 리스트 조회
+studyRoute.get(
+  '/:study_id/habits',
+  validateParams(studyIdSchema),
+  habitController.getHabits,
+); // 오늘의 습관 리스트 조회
 
 studyRoute.post(
-  '/',
+  '/:study_id/habits',
   validateParams(studyIdSchema),
-  //validateBody(createHabitSchema),
+  validateBody(createHabitSchema),
   habitController.createHabits,
 ); // 오늘의 습관 만들기
 
 studyRoute.patch(
-  '/',
+  '/:study_id/habits',
   validateParams(studyIdSchema),
-  //validateBody(updateHabitsSchema),
+  validateBody(updateHabitsSchema),
   habitController.updateHabits,
 ); // 오늘의 습관 수정
 
-studyRoute.delete('/', habitController.deleteHabits); // 오늘의 습관 삭제
+studyRoute.patch(
+  '/:study_id/habits/:habit_id/records',
+  validateParams(habitRecordSchema),
+  validateBody(toggleHabitRecordSchema),
+  habitController.toggleHabitRecord,
+);
 
-studyRoute.get(
-  '/:study_id/habits/records/weekly',
+studyRoute.delete(
+  '/:study_id/habits',
   validateParams(studyIdSchema),
-  validateQuery(getWeeklyHabitRecordsQuerySchema),
-  habitController.getWeeklyHabitRecords,
-); // 주단위 습관 기록 조회
+  validateBody(deleteHabitsSchema),
+  habitController.deleteHabits,
+); // 오늘의 습관 삭제
 
 studyRoute.get(
   '/nickname/check',

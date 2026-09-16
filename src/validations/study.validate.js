@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import dayjs from 'dayjs';
 
 export const createStudySchema = z.object({
   nickname: z
@@ -98,7 +99,9 @@ export const updateStudySchema = z.object({
 export const getWeeklyHabitRecordsQuerySchema = studyIdSchema.extend({
   target_date: z
     .string({ required_error: 'startDate는 필수 입력값입니다.' })
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'startDate는 YYYY-MM-DD 형식이어야 합니다.'),
+    .refine((val) => dayjs(val, 'YYYY-MM-DD', true).isValid(), {
+      message: '날짜 형식은 YYYY-MM-DD 이어야 합니다.',
+    }),
 });
 
 export const updatePointsSchema = z.object({

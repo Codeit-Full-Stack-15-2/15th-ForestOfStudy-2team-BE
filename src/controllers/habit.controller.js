@@ -2,8 +2,8 @@ import * as habitService from '#src/services/habit.service.js';
 import { HTTP_STATUS } from '../constants/index.js';
 
 export const getHabits = async (req, res) => {
-  const { studyId } = req.validated.params;
-  const { date } = req.validated.params || req.query;
+  const { study_id: studyId } = req.validated.params;
+  const date = req.validated.query?.date || req.query?.date;
 
   const habits = await habitService.getHabitsService(studyId, date);
 
@@ -15,10 +15,10 @@ export const getHabits = async (req, res) => {
 };
 
 export const createHabits = async (req, res) => {
-  const { study_id } = req.validated.params;
-  const { titles } = req.validated.body;
+  const { study_id: studyId } = req.validated.params;
+  const { title } = req.validated.body;
 
-  const newHabit = await habitService.createHabitsService(study_id, titles);
+  const newHabit = await habitService.createHabitsService(studyId, title);
   res.status(HTTP_STATUS.CREATE).json({
     success: true,
     data: newHabit,
@@ -27,23 +27,43 @@ export const createHabits = async (req, res) => {
 };
 
 export const updateHabits = async (req, res) => {
-  const { study_id } = req.validated.params;
+  const { study_id: studyId } = req.validated.params;
   const { habits } = req.validated.body;
 
-  const updateHabits = await habitService.updateHabitsService(study_id, habits);
+  const updatedHabits = await habitService.updateHabitsService(studyId, habits);
 
   res.status(HTTP_STATUS.OK).json({
     success: true,
-    data: updateHabits,
-    message: '습관을 성공적으로 수정했습니다.',
+    data: updatedHabits,
+    message: '습관 정보가 수정되었습니다.',
+  });
+};
+
+export const toggleHabitRecord = async (req, res) => {
+  const { habit_id: habitId } = req.validated.params;
+  const { recordDate } = req.validated.body;
+
+  const targetDate = recordDate || new Date().toISOString().split('T')[0];
+
+  const updateRecord = await habitService.toggleHabitRecordService(
+    habitId,
+    targetDate,
+  );
+
+  const isCompleted = updateRecord.deletedAt === null;
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: updateRecord,
+    message: isCompleted ? '습관을 완료했습니다.' : '습관 완료를 취소했습니다.',
   });
 };
 
 export const deleteHabits = async (req, res) => {
-  const { study_id } = req.validated.params;
+  const { study_id: studyId } = req.validated.params;
   const { habitIds } = req.validated.body;
 
-  const result = await habitService.deleteHabitsService(study_id, habitIds);
+  const result = await habitService.deleteHabitsService(studyId, habitIds);
 
   res.status(HTTP_STATUS.OK).json({
     success: true,
