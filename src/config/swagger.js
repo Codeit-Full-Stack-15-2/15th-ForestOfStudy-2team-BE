@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import swaggerUi from 'swagger-ui-express';
+import swaggerUI from 'swagger-ui-express';
 import YAML from 'yaml';
 
 const loadYaml = (relativePath) => {
@@ -51,4 +51,4 @@ const swaggerOptions = {
   ],
 };
 
-export { swaggerOptions, swaggerSpec, swaggerUi };
+export { swaggerOptions, swaggerSpec, swaggerUI };
