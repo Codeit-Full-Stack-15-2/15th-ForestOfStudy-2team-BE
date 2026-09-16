@@ -4,7 +4,7 @@ import { logger } from '#src/middlewares/logger.js';
 import cors from 'cors';
 import express from 'express';
 import { isDevelopment } from './config/config.js';
-import { swaggerOptions, swaggerSpec, swaggerUI } from './config/swagger.js';
+import { swaggerOptions, swaggerSpec, swaggerUi } from './config/swagger.js';
 import { router } from './routes/index.js';
 
 const app = express();
@@ -13,8 +13,8 @@ app.use(cors());
 app.use(express.json());
 app.use(
   '/api-docs',
-  swaggerUI.serve,
-  swaggerUI.setup(swaggerSpec, swaggerOptions),
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, swaggerOptions),
 );
 
 if (isDevelopment) {

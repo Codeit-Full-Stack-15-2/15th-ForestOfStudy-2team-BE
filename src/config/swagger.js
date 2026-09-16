@@ -24,7 +24,6 @@ const options = {
 
 const swaggerSpec = swaggerJSDoc(options);
 
-// CDN 경로를 unpkg의 가장 안정적인 버전으로 변경
 const swaggerOptions = {
   customCssUrl: 'https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css',
   customJs: [
@@ -33,5 +32,5 @@ const swaggerOptions = {
   ],
 };
 
-export const swaggerUI = swaggerUi;
-export { swaggerOptions, swaggerSpec };
+// swaggerUi 객체 원본과 설정을 정석대로 export
+export { swaggerOptions, swaggerSpec, swaggerUi };
