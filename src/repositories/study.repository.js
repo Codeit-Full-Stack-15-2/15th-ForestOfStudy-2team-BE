@@ -125,6 +125,9 @@ export const findStudyById = async (studyId) => {
         emoji: true,
         guestUuid: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     }),
   ]);
 
