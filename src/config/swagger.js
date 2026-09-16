@@ -1,54 +1,5 @@
-import fs from 'fs';
-import path from 'path';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
-import YAML from 'yaml';
-
-const getYamlDocs = () => {
-  const docsDir = path.join(process.cwd(), 'src/swagger/docs');
-  const combinedPaths = {};
-  const combinedComponents = { schemas: {} };
-
-  try {
-    if (fs.existsSync(docsDir)) {
-      // 재귀적으로 모든 YAML 파일 탐색
-      const files = fs.readdirSync(docsDir, { recursive: true });
-
-      files.forEach((file) => {
-        const fileString = String(file);
-        if (fileString.endsWith('.yaml') || fileString.endsWith('.yml')) {
-          const filePath = path.join(docsDir, fileString);
-          const content = fs.readFileSync(filePath, 'utf8');
-          const parsed = YAML.parse(content);
-
-          if (parsed) {
-            // 1. paths 매핑: 모든 YAML에 paths 키가 보장되므로 단 한 줄로 병합
-            if (parsed.paths) {
-              Object.assign(combinedPaths, parsed.paths);
-            }
-
-            // 2. components 매핑
-            if (parsed.components) {
-              if (parsed.components.schemas) {
-                Object.assign(
-                  combinedComponents.schemas,
-                  parsed.components.schemas,
-                );
-              }
-              Object.assign(combinedComponents, parsed.components);
-            }
-          }
-        }
-      });
-    }
-  } catch (err) {
-    console.error('YAML 파싱 실패:', err);
-  }
-
-  return { combinedPaths, combinedComponents };
-};
-
-const { combinedPaths, combinedComponents } = getYamlDocs();
 
 const options = {
   definition: {
@@ -66,10 +17,9 @@ const options = {
         description: 'API 서버',
       },
     ],
-    paths: combinedPaths,
-    components: combinedComponents,
   },
-  apis: [],
+  // fs, path, yaml 패키지 없이 와일드카드로 자동 병합
+  apis: ['./src/swagger/docs/**/*.yaml', './src/swagger/docs/**/*.yml'],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
