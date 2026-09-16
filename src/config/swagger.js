@@ -5,13 +5,7 @@ import YAML from 'yaml';
 
 const loadYaml = (relativePath) => {
   try {
-    // 1순위: process.cwd() 기준 탐색
-    let fullPath = path.join(process.cwd(), relativePath);
-    if (!fs.existsSync(fullPath)) {
-      // 2순위: 상대 경로 보완 탐색
-      fullPath = path.resolve(relativePath);
-    }
-
+    const fullPath = path.join(process.cwd(), relativePath);
     if (fs.existsSync(fullPath)) {
       const fileContent = fs.readFileSync(fullPath, 'utf8');
       return YAML.parse(fileContent) || {};
@@ -22,7 +16,6 @@ const loadYaml = (relativePath) => {
   return {};
 };
 
-// 개별 YAML 스펙 직접 로드
 const healthSpec = loadYaml('src/swagger/docs/health.yaml');
 
 const swaggerSpec = {
