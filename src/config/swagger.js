@@ -10,7 +10,12 @@ const options = {
       version: '1.0.0',
     },
     servers: [
-      { url: `http://localhost:${process.env.PORT}/api`, description: '' },
+      {
+        url: process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}/api`
+          : `http://localhost:${process.env.PORT || 3000}/api`,
+        description: 'API 서버',
+      },
     ],
   },
   apis: ['./src/swagger/docs/**/*.yaml'],
@@ -18,4 +23,14 @@ const options = {
 
 const swaggerSpec = swaggerJSDoc(options);
 
-export { swaggerSpec, swaggerUI };
+// Vercel 서버리스 환경 완벽 대응용 CDN 옵션
+const swaggerOptions = {
+  customCssUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-bundle.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-standalone-preset.js',
+  ],
+};
+
+export { swaggerOptions, swaggerSpec, swaggerUI };

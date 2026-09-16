@@ -4,14 +4,19 @@ import { logger } from '#src/middlewares/logger.js';
 import cors from 'cors';
 import express from 'express';
 import { isDevelopment } from './config/config.js';
-import { swaggerSpec, swaggerUI } from './config/swagger.js';
+import { swaggerOptions, swaggerSpec, swaggerUI } from './config/swagger.js';
 import { router } from './routes/index.js';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+// CDN 옵션(swaggerOptions)을 함께 바인딩하여 정적 파일 서빙 문제 차단
+app.use(
+  '/api-docs',
+  swaggerUI.serve,
+  swaggerUI.setup(swaggerSpec, swaggerOptions),
+);
 
 if (isDevelopment) {
   app.use(logger);
