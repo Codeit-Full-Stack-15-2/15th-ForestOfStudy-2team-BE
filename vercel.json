@@ -1,9 +1,6 @@
 {
   "functions": {
-    "api/**/*.js": {
-      "includeFiles": "src/swagger/docs/**"
-    },
-    "src/**/*.js": {
+    "**/*.js": {
       "includeFiles": "src/swagger/docs/**"
     }
   }
