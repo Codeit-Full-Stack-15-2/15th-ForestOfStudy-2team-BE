@@ -3,10 +3,15 @@ import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yaml';
 
-// 안전하게 YAML 파일을 읽어오는 헬퍼 함수
 const loadYaml = (relativePath) => {
   try {
-    const fullPath = path.join(process.cwd(), relativePath);
+    // 1순위: process.cwd() 기준 탐색
+    let fullPath = path.join(process.cwd(), relativePath);
+    if (!fs.existsSync(fullPath)) {
+      // 2순위: 상대 경로 보완 탐색
+      fullPath = path.resolve(relativePath);
+    }
+
     if (fs.existsSync(fullPath)) {
       const fileContent = fs.readFileSync(fullPath, 'utf8');
       return YAML.parse(fileContent) || {};
@@ -19,9 +24,7 @@ const loadYaml = (relativePath) => {
 
 // 개별 YAML 스펙 직접 로드
 const healthSpec = loadYaml('src/swagger/docs/health.yaml');
-// 다른 YAML 파일이 있다면 추가 (예: const habitsSpec = loadYaml('src/swagger/docs/habits.yaml');)
 
-// Swagger Spec 객체 정밀 직접 수동 구성
 const swaggerSpec = {
   openapi: '3.0.0',
   info: {
@@ -39,7 +42,6 @@ const swaggerSpec = {
   ],
   paths: {
     ...(healthSpec.paths || {}),
-    // ...(habitsSpec.paths || {}),
   },
   components: {
     ...(healthSpec.components || {}),
