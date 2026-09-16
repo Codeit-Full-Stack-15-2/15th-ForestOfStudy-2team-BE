@@ -99,12 +99,14 @@ studyRoute.patch(
 
 studyRoute.get(
   '/:study_id/habits',
+  verifyAccessToken,
   validateParams(studyIdSchema),
   habitController.getHabits,
 ); // 오늘의 습관 리스트 조회
 
 studyRoute.post(
   '/:study_id/habits',
+  verifyAccessToken,
   validateParams(studyIdSchema),
   validateBody(createHabitSchema),
   habitController.createHabits,
@@ -112,6 +114,7 @@ studyRoute.post(
 
 studyRoute.patch(
   '/:study_id/habits',
+  verifyAccessToken,
   validateParams(studyIdSchema),
   validateBody(updateHabitsSchema),
   habitController.updateHabits,
@@ -119,6 +122,7 @@ studyRoute.patch(
 
 studyRoute.patch(
   '/:study_id/habits/:habit_id/records',
+  verifyAccessToken,
   validateParams(habitRecordSchema),
   validateBody(toggleHabitRecordSchema),
   habitController.toggleHabitRecord,
@@ -126,6 +130,7 @@ studyRoute.patch(
 
 studyRoute.delete(
   '/:study_id/habits',
+  verifyAccessToken,
   validateParams(studyIdSchema),
   validateBody(deleteHabitsSchema),
   habitController.deleteHabits,
