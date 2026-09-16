@@ -13,8 +13,8 @@ const options = {
     servers: [
       {
         url: process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : `http://localhost:${process.env.PORT || 3000}`,
+          ? `https://${process.env.VERCEL_URL}/api`
+          : `http://localhost:${process.env.PORT || 3000}/api`,
         description: 'API 서버',
       },
     ],
@@ -36,6 +36,9 @@ const swaggerOptions = {
     'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-standalone-preset.js',
   ],
 };
+
+// 디버깅용: 파싱된 paths 목록 확인
+console.log('Parsed Swagger Paths:', Object.keys(swaggerSpec.paths || {}));
 
 export const swaggerUI = swaggerUi;
 export { swaggerOptions, swaggerSpec };
