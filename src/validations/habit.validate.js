@@ -1,3 +1,4 @@
+import dayjs from '#src/utils/dayjs.js';
 import { z } from 'zod';
 import { paginationQuerySchema } from './commonSchema.js';
 
@@ -82,17 +83,15 @@ export const deleteHabitsSchema = z.object({
 export const getWeeklyHabitRecordsQuerySchema = paginationQuerySchema.extend({
   target_date: z
     .string({ required_error: 'target_date는 필수 입력값입니다.' })
-    .regex(
-      /^\d{4}-\d{2}-\d{2}$/,
-      'target_date는 YYYY-MM-DD 형식이어야 합니다.',
-    ),
+    .refine((val) => dayjs(val, 'YYYY-MM-DD', true).isValid(), {
+      message: 'target_date는 유효한 YYYY-MM-DD 형식이어야 합니다.',
+    }),
 });
 
 export const getMonthlyHabitRecordsQuerySchema = paginationQuerySchema.extend({
   target_date: z
     .string({ required_error: 'target_date는 필수 입력값입니다.' })
-    .regex(
-      /^\d{4}-\d{2}-\d{2}$/,
-      'target_date는 YYYY-MM-DD 형식이어야 합니다.',
-    ),
+    .refine((val) => dayjs(val, 'YYYY-MM-DD', true).isValid(), {
+      message: 'target_date는 유효한 YYYY-MM-DD 형식이어야 합니다.',
+    }),
 });
