@@ -10,16 +10,19 @@ import {
   validateQuery,
 } from '#src/middlewares/validate.middleware.js';
 import {
+  getMonthlyHabitRecordsQuerySchema,
+  getWeeklyHabitRecordsQuerySchema,
+} from '#src/validations/habit.validate.js';
+import {
+  checkNicknameQuerySchema,
   createReactionSchema,
   createStudySchema,
   getStudiesQuerySchema,
   studyIdSchema,
-  verifyPasswordSchema,
-  updateStudySchema,
   updatePointsSchema,
-  checkNicknameQuerySchema,
+  updateStudySchema,
+  verifyPasswordSchema,
 } from '#src/validations/study.validate.js';
-import { getWeeklyHabitRecordsQuerySchema } from '#src/validations/habit.validate.js';
 import { Router } from 'express';
 export const studyRoute = Router();
 
@@ -113,3 +116,10 @@ studyRoute.get(
   validateQuery(checkNicknameQuerySchema),
   studyController.checkNicknameAvailability,
 ); // 닉네임 중복 확인
+
+studyRoute.get(
+  '/:study_id/habits/records/monthly',
+  validateParams(studyIdSchema),
+  validateQuery(getMonthlyHabitRecordsQuerySchema),
+  habitController.getMonthlyHabitRecords,
+);

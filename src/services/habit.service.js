@@ -123,7 +123,6 @@ export const getWeeklyRecords = async (studyId, targetDate, page, pageSize) => {
     throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
   }
 
-  // 2. 날짜 유효성 검증 방어벽
   const base = dayjs.tz(targetDate);
   if (!base.isValid()) {
     throw new BadRequestException(ERROR_MESSAGES.INVALID_DATE_FORMAT);
@@ -160,6 +159,62 @@ export const getWeeklyRecords = async (studyId, targetDate, page, pageSize) => {
     return {
       ...habit,
       weeklyRecords,
+    };
+  });
+
+  return {
+    totalCount,
+    list: formattedHabits,
+  };
+};
+
+export const getMonthlyRecords = async (
+  studyId,
+  targetDate,
+  page,
+  pageSize,
+) => {
+  const numericStudyId = Number(studyId);
+  const study = await studyRepository.findActiveStudyOnly(numericStudyId);
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
+  const base = dayjs.tz(targetDate);
+  if (!base.isValid()) {
+    throw new BadRequestException(ERROR_MESSAGES.INVALID_DATE_FORMAT);
+  }
+  const startDate = base.subtract(29, 'day').format('YYYY-MM-DD');
+  const endDate = base.format('YYYY-MM-DD');
+
+  const { totalCount, habits } =
+    await habitRepository.findHabitsWithRecordsByStudyIdAndDateRange(
+      numericStudyId,
+      startDate,
+      endDate,
+      page,
+      pageSize,
+    );
+
+  const monthDays = Array.from({ length: 30 }, (_, i) =>
+    base.subtract(29 - i, 'day').format('YYYY-MM-DD'),
+  );
+
+  const formattedHabits = habits.map((habit) => {
+    const monthlyRecords = monthDays.map((dateStr) => {
+      const foundRecord = habit.records.find(
+        (rec) => dayjs.tz(rec.recordDate).format('YYYY-MM-DD') === dateStr,
+      );
+
+      return {
+        date: dateStr,
+        record: foundRecord || null,
+      };
+    });
+
+    return {
+      ...habit,
+      monthlyRecords,
     };
   });
 
