@@ -4,19 +4,14 @@ import { logger } from '#src/middlewares/logger.js';
 import cors from 'cors';
 import express from 'express';
 import { isDevelopment } from './config/config.js';
-import { swaggerOptions, swaggerSpec, swaggerUI } from './config/swagger.js';
+import { swaggerSpec, swaggerUI } from './config/swagger.js';
 import { router } from './routes/index.js';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-// app.js 내 해당 라우트 수정
-app.use(
-  '/api-docs',
-  swaggerUI.serve,
-  swaggerUI.setup(swaggerSpec, swaggerOptions),
-);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 if (isDevelopment) {
   app.use(logger);
