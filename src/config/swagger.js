@@ -27,10 +27,7 @@ const options = {
   //   path.join(docsDir, '**/*.yaml'),
   //   path.join(docsDir, '**/*.yml'),
   // ],
-  apis: [
-    path.join('src/swagger/docs', '**/*.yaml'),
-    path.join('src/swagger/docs', '**/*.yml'),
-  ],
+  apis: ['src/swagger/docs/**/*.yaml', 'src/swagger/docs/**/*.yml'],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
