@@ -13,8 +13,8 @@ const options = {
     servers: [
       {
         url: process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}/api`
-          : `http://localhost:${process.env.PORT || 3000}/api`,
+          ? `https://${process.env.VERCEL_URL}`
+          : `http://localhost:${process.env.PORT || 3000}`,
         description: 'API 서버',
       },
     ],
