@@ -45,7 +45,8 @@ studyRoute.post(
 studyRoute.get('/verify', verifyAccessToken, studyController.verifyToken);
 
 studyRoute.get(
-  '/records/weekly',
+  '/:study_id/habits/records/weekly',
+  validateParams(studyIdSchema),
   validateQuery(getWeeklyHabitRecordsQuerySchema),
   habitController.getWeeklyHabitRecords,
 ); // 주단위 습관 기록 조회

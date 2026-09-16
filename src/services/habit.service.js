@@ -13,14 +13,10 @@ export const createHabitsService = async (studyId, titles) => {
     throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
   }
 
-  const existingHabits = await prisma.habit.findMany({
-    where: {
-      studyId: Number(studyId),
-      title: { in: titles },
-      deletedAt: null,
-    },
-    select: { title: true },
-  });
+  const existingHabits = await habitRepository.findActiveHabitsByTitles(
+    studyId,
+    titles,
+  );
 
   if (existingHabits.length > 0) {
     throw new ConflictException(ERROR_MESSAGES.HABIT_ALREADY_EXISTS);
@@ -105,10 +101,6 @@ export const updateHabitsService = async (studyId, habitsData) => {
 
   //실제 수정 실행 함수 호출
   await habitRepository.updateHabits(habitsData);
-
-  //습관 일관 수정
-  const today = new Date().toISOString().split('T')[0];
-  await habitRepository.softDeleteRecordsByHabitIdsAndDate(habitIds, today);
 
   // 수정된 최신 습관 목록 다시 조회하여 반환
   const updatedHabits = await habitRepository.findHabitsByIds(habitIds);
