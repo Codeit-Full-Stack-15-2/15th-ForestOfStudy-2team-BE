@@ -20,11 +20,13 @@ export const findStudies = async (keyword, orderBy, page, pageSize) => {
           {
             title: {
               contains: keyword,
+              mode: 'insensitive',
             },
           },
           {
             nickname: {
               contains: keyword,
+              mode: 'insensitive',
             },
           },
         ],
@@ -124,6 +126,9 @@ export const findStudyById = async (studyId) => {
       select: {
         emoji: true,
         guestUuid: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     }),
   ]);

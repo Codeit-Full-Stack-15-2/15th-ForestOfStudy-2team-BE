@@ -1,4 +1,6 @@
+import dayjs from '#src/utils/dayjs.js';
 import { z } from 'zod';
+import { paginationQuerySchema } from './commonSchema.js';
 
 export const createHabitSchema = z.object({
   title: z
@@ -78,19 +80,18 @@ export const deleteHabitsSchema = z.object({
     .min(1, '삭제할 습관을 최소 하나 이상 선택해 주세요.'),
 });
 
-export const getWeeklyHabitRecordsQuerySchema = z.object({
-  page: z.coerce
-    .number({ invalid_type_error: '페이지는 숫자여야 합니다.' })
-    .int('페이지는 정수여야 합니다.')
-    .positive('페이지는 1 이상의 양수여야 합니다.')
-    .default(1),
-  page_size: z.coerce
-    .number({ invalid_type_error: '페이지 사이즈는 숫자여야 합니다.' })
-    .int('페이지 사이즈는 정수여야 합니다.')
-    .positive('페이지 사이즈는 양수여야 합니다.')
-    .max(100, '한 번에 최대 100개까지만 조회할 수 있습니다.')
-    .default(7),
+export const getWeeklyHabitRecordsQuerySchema = paginationQuerySchema.extend({
   target_date: z
-    .string({ required_error: 'startDate는 필수 입력값입니다.' })
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'startDate는 YYYY-MM-DD 형식이어야 합니다.'),
+    .string({ required_error: 'target_date는 필수 입력값입니다.' })
+    .refine((val) => dayjs(val, 'YYYY-MM-DD', true).isValid(), {
+      message: 'target_date는 유효한 YYYY-MM-DD 형식이어야 합니다.',
+    }),
+});
+
+export const getMonthlyHabitRecordsQuerySchema = paginationQuerySchema.extend({
+  target_date: z
+    .string({ required_error: 'target_date는 필수 입력값입니다.' })
+    .refine((val) => dayjs(val, 'YYYY-MM-DD', true).isValid(), {
+      message: 'target_date는 유효한 YYYY-MM-DD 형식이어야 합니다.',
+    }),
 });
