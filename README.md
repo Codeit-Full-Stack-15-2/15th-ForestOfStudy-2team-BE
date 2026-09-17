@@ -113,6 +113,7 @@ https://app.notion.com/p/e3c8809438758323bf53011c508f434e?v=1c088094387582578564
     - 공용으로 사용할 Modal 컴포넌트 구현
 
 ### 파일 구조
+```
 15th-ForestOfStudy-2team-BE/
 ├── env/                       
 ├── prisma/                    
@@ -136,6 +137,7 @@ https://app.notion.com/p/e3c8809438758323bf53011c508f434e?v=1c088094387582578564
 │   ├── app.js
 │   └── server.js
 └── package.json
+```
 
 ### 구현 홈페이지
 https://forest-of-study-six.vercel.app/
