@@ -5,13 +5,29 @@ export const createHabit = async (studyId, titles) => {
   const createdHabits = [];
 
   for (const title of titles) {
-    const habit = await prisma.habit.create({
-      data: {
+    const deletedHabit = await prisma.habit.findFirst({
+      where: {
         studyId: Number(studyId),
         title: title,
+        deletedAt: { not: null },
       },
     });
-    createdHabits.push(habit);
+
+    if (deletedHabit) {
+      const restoredHabit = await prisma.habit.update({
+        where: { id: deletedHabit.id },
+        data: { deletedAt: null },
+      });
+      createdHabits.push(restoredHabit);
+    } else {
+      const newHabit = await prisma.habit.create({
+        data: {
+          studyId: Number(studyId),
+          title: title,
+        },
+      });
+      createdHabits.push(newHabit);
+    }
   }
   return createdHabits;
 };

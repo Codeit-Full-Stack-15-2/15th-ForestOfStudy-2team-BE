@@ -62,7 +62,7 @@ export const getHabitsService = async (studyId, targetDate) => {
       records: habit.records.map((record) => ({
         id: record.id,
         recordDate: record.recordDate,
-        isComplete: record.isComplete === null,
+        isComplete: record.deletedAt === null,
       })),
     };
   });
