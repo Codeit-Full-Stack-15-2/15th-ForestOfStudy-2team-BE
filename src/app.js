@@ -1,10 +1,13 @@
 import { errorHandler } from '#src/middlewares/error-handler.middleware.js';
 import { logger } from '#src/middlewares/logger.js';
-// import { swaggerUI } from '#src/swagger/swagger.js';
+import {
+  swaggerOptions,
+  swaggerSpec,
+  swaggerUI,
+} from '#src/swagger/swagger.js';
 import cors from 'cors';
 import express from 'express';
 import { isDevelopment } from './config/config.js';
-import { swaggerOptions, swaggerSpec, swaggerUI } from './config/swagger.js';
 import { router } from './routes/index.js';
 
 const app = express();
