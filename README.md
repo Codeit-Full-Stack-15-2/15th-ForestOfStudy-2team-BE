@@ -10,7 +10,7 @@ https://app.notion.com/p/e3c8809438758323bf53011c508f434e?v=1c088094387582578564
 
 윤욱진 [깃허브](https://github.com/Guts91-creator)
 
-김재영 [깃허브](https://github.com/yangpahub)
+김재영 [깃허브](<>)
 
 황영환 [깃허브](개인 Github 링크)
 
@@ -96,35 +96,27 @@ https://app.notion.com/p/e3c8809438758323bf53011c508f434e?v=1c088094387582578564
 
 ### 김재영
 
-### 오늘의 습관 UI 구현
+# 📌 백엔드: 오늘의 습관(Habit) REST API 구현
 
-![오늘의 습관](이미지_경로/habit_main.png)
-![오늘의 습관](이미지_경로/habit_main.png)
-![오늘의 습관](이미지_경로/habit_main.png)
+### API 라우트 및 보안/유효성 검사
 
-- **체크 및 목록 편집 모드 분리**
-  - 체크 모드: 오늘 달성할 습관 완료/취소 토글 및 UI 반응 연동
-  - 목록 편집 모드: 습관 추가/수정/삭제 모달 연동 및 인라인 편집 지원
-- **한글 입력 UX 개선 (IME 이벤트 제어)**
-  - 한글 조합 과정(`isComposing`) 감지를 통해 엔터 키 입력 시 발생하던 중복 이벤트 완벽 차단
-- **데이터 이탈 방지 모달 및 알림**
-  - `useBlocker` 및 `beforeunload` 이벤트를 활용해 저장되지 않은 변경사항(`isDirty`) 존재 시 이탈 안내 경고 출력
-- **API 상태별 UI 대응 (Empty / Active)**
-  - 등록된 습관이 없을 때 안내 문구를 노출하는 Empty UI 처리 및 데이터 로딩/에러 상태별 사용자 경험 최적화
+- **JWT 기반 인증 미들웨어 적용**
+  - `Authorization: Bearer <token>` 헤더 검증 미들웨어(`verifyAccessToken`)를 통한 습관 관리 API 접근 제어
+- **RESTful API 엔드포인트 설계**
+  - 습관 조회, 생성, 수정, 삭제 및 일자별/기간별 달성 기록 토글 API 표준화
 
 ---
 
-### API 연동 및 클라이언트 데이터 상태 관리
+### 데이터베이스 (Prisma ORM) & 비즈니스 로직
 
-- **Optimistic UI (낙관적 업데이트) 적용**
-  - 습관 체크 시 UI 상태를 선 반영한 후 API 호출, 실패 시 이전 상태로 자동 롤백(Rollback)
-- **임시 상태 기반 일괄 처리 (Batch Processing)**
-  - 습관 생성(`isTemp`), 수정(`isUpdated`), 삭제(`isDeleted`) 상태를 클라이언트 메모리에서 관리
-  - [완료] 버튼 클릭 시점에 묶어서 API를 일괄 호출하여 불필요한 네트워크 요청 최소화
-- **Day.js & ISO 기준 TimeZone 동기화**
-  - 로컬 날짜 포맷(`YYYY-MM-DD`) 단일화로 KST/UTC 시차에 따른 날짜 어긋남 방지
-- **API 응답 데이터 정규화 (Normalization)**
-  - 백엔드 응답 데이터 구조에 맞춰 당일 달성 여부를 불리언(`isComplete`) 상태 값으로 파싱해 컴포넌트에 주입
+- **Prisma `upsert` 구문을 통한 달성 기록 최적화**
+  - `habitId_recordDate` 복합키 기반으로 1개 쿼리로 당일 달성 기록 생성 및 `deletedAt` 토글 처리
+- **소프트 삭제(Soft Delete) 및 복구(Restore) 패턴**
+  - 이미 삭제 처리된 동명의 습관 재등록 시 새 레코드 생성 대신 `deletedAt: null`로 기존 데이터 재활용
+- **Day.js 기반 기간별 습관 통계 데이터 파싱**
+  - `dayjs.tz` 기반 주단위(7일) 및 30일 데이터 배열 동적 생성 및 대시보드 연동용 API 응답 데이터 정규화
+
+---
 
 ### 김다찬
 
