@@ -1,4 +1,5 @@
 import { prisma } from '#src/db/prisma.js';
+import dayjs from '#src/utils/dayjs.js';
 
 export const createHabit = async (studyId, titles) => {
   const createdHabits = [];
@@ -172,21 +173,22 @@ export const findHabitsWithRecordsByStudyIdAndDateRange = async (
   page = 1,
   pageSize = 7,
 ) => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
+  const start = dayjs(startDate).startOf('day').toDate();
+  const end = dayjs(endDate).endOf('day').toDate();
+
   const skip = (Number(page) - 1) * Number(pageSize);
   const take = Number(pageSize);
 
   const whereCondition = {
     studyId: Number(studyId),
     OR: [
-      {
-        deletedAt: null,
-      },
+      // Case 1: 삭제되지 않은 활성 습관
+      { deletedAt: null },
+      // Case 2: 삭제된 습관이더라도 지정된 기간(Today 포함) 내에 작성된 기록이 존재하는 경우
+      // (records의 deletedAt 조건 제거하여 부모가 삭제될 때 기록이 같이 Soft Delete되어도 조회 가능하게 수정)
       {
         records: {
           some: {
-            deletedAt: null,
             recordDate: {
               gte: start,
               lte: end,
@@ -206,7 +208,6 @@ export const findHabitsWithRecordsByStudyIdAndDateRange = async (
       include: {
         records: {
           where: {
-            deletedAt: null,
             recordDate: {
               gte: start,
               lte: end,
