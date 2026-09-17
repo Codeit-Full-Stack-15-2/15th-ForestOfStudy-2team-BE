@@ -113,33 +113,32 @@ https://app.notion.com/p/e3c8809438758323bf53011c508f434e?v=1c088094387582578564
     - 공용으로 사용할 Modal 컴포넌트 구현
 
 ### 파일 구조
-```
-15th-ForestOfStudy-2team-FE/
-├── env/                              
-├── public/                           
+15th-ForestOfStudy-2team-BE/
+├── env/                       
+├── prisma/                    
+│   ├── base.prisma
+│   ├── study.prisma
+│   ├── habit.prisma
+│   └── migrations/
 ├── src/
-│   ├── api/                          
-│   ├── assets/                      
-│   ├── components/                   
-│   ├── mocks/                       
-│   ├── pages/
-│   │   ├── focusPage/               
-│   │   ├── HabitPage/               
-│   │   ├── home/                    
-│   │   ├── studyCreate/             
-│   │   ├── studyDetail/              
-│   │   ├── studyEdit/                
-│   │   └── notFound/
+│   ├── config/                 
+│   ├── constants/               
+│   ├── controllers/              
+│   ├── db/                      
+│   ├── errors/                  
+│   ├── middlewares/               
+│   ├── repositories/               
+│   ├── routes/                     
+│   ├── services/                    
+│   ├── swagger/                      
 │   ├── utils/                        
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── router.jsx
-├── vite.config.js
+│   ├── validations/                    
+│   ├── app.js
+│   └── server.js
 └── package.json
-```
 
 ### 구현 홈페이지
-https://forest-of-study-chi.vercel.app/
+https://forest-of-study-six.vercel.app/
 
 ### 프로젝트 회고록
 https://app.notion.com/p/2-9fe8809438758287833c013845c2cb83?source=copy_link
