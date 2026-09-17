@@ -1,0 +1,270 @@
+import { BadRequestException } from '#src/errors/bad-request-exception.js';
+import { NotFoundException } from '#src/errors/not-found-exception.js';
+import * as habitRepository from '#src/repositories/habit.repository.js';
+import * as studyRepository from '#src/repositories/study.repository.js';
+import dayjs from '#src/utils/dayjs.js';
+import { ERROR_MESSAGES } from '../constants/index.js';
+import { ConflictException } from '#src/errors/conflict-exception.js';
+import { prisma } from '#src/db/prisma.js';
+
+export const createHabitsService = async (studyId, titles) => {
+  const study = await studyRepository.findStudyById(studyId);
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
+  const existingHabits = await habitRepository.findActiveHabitsByTitles(
+    studyId,
+    titles,
+  );
+
+  if (existingHabits.length > 0) {
+    throw new ConflictException(ERROR_MESSAGES.HABIT_ALREADY_EXISTS);
+  }
+
+  const newHabits = await habitRepository.createHabit(Number(studyId), titles);
+
+  return newHabits;
+};
+
+export const getHabitsService = async (studyId, targetDate) => {
+  const study = await studyRepository.findStudyById(studyId);
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
+  const baseDate = targetDate ? new Date(targetDate) : new Date();
+  const startDate = new Date(baseDate);
+  startDate.setHours(0, 0, 0, 0);
+
+  const endDate = new Date(baseDate);
+  endDate.setHours(23, 59, 59, 999);
+
+  const habits = await habitRepository.findHabits(
+    Number(studyId),
+    startDate,
+    endDate,
+  );
+
+  if (!habits || habits.length === 0) {
+    return [];
+  }
+
+  return habits.map((habit) => {
+    const todayRecord = habit.records?.[0];
+    const isCompleted = Boolean(todayRecord && todayRecord.deletedAt === null);
+    return {
+      id: habit.id,
+      studyId: habit.studyId,
+      title: habit.title,
+      createdAt: habit.createdAt,
+      isComplete: isCompleted,
+      records: habit.records.map((record) => ({
+        id: record.id,
+        recordDate: record.recordDate,
+        isComplete: record.deletedAt === null,
+      })),
+    };
+  });
+};
+
+export const updateHabitsService = async (studyId, habitsData) => {
+  const numericStudyId = Number(studyId);
+
+  const study = await studyRepository.findStudyById(numericStudyId);
+
+  // 스터디 존재 여부 확인
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
+  const formattedHabitsData = habitsData.map((h) => ({
+    id: Number(h.id),
+    title: h.title,
+  }));
+  //수정 대상 습관들이 해당 스터디에 실제 속해있는지 확인
+  const habitIds = formattedHabitsData.map((h) => Number(h.id));
+  const existingHabits = await habitRepository.findHabitsByIds(habitIds);
+
+  if (existingHabits.length !== habitsData.length) {
+    throw new NotFoundException(ERROR_MESSAGES.HABIT_NOT_FOUND);
+  }
+
+  const isInvalidStudy = existingHabits.some(
+    (habit) => habit.studyId !== Number(studyId),
+  );
+  if (isInvalidStudy) {
+    throw new BadRequestException(
+      '해당 스터디에 속하지 않은 습관이 포함되어 있습니다.',
+    );
+  }
+
+  //실제 수정 실행 함수 호출
+  await habitRepository.updateHabits(habitsData);
+
+  // 수정된 최신 습관 목록 다시 조회하여 반환
+  const updatedHabits = await habitRepository.findHabitsByIds(habitIds);
+
+  return updatedHabits;
+};
+
+export const toggleHabitRecordService = async (
+  habitId,
+  targetDate,
+  isComplete,
+) => {
+  const habit = await habitRepository.findHabitsByIds([Number(habitId)]);
+  if (!habit || habit.length === 0) {
+    throw new NotFoundException(ERROR_MESSAGES.HABIT_NOT_FOUND);
+  }
+
+  const updatedRecord = await habitRepository.toggleHabitRecord(
+    Number(habitId),
+    targetDate,
+    isComplete,
+  );
+
+  return updatedRecord;
+};
+
+export const deleteHabitsService = async (studyId, habitIds) => {
+  const study = await studyRepository.findStudyById(studyId);
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
+  //2. 삭제할 습관들이 DB에 유효하게 존재하는지 확인 (deletedAt: null인 항목만)
+  const targetHabitIds = habitIds.map((id) => Number(id));
+  const existingHabits = await habitRepository.findHabitsByIds(targetHabitIds);
+
+  if (existingHabits.length !== habitIds.length) {
+    throw new NotFoundException(ERROR_MESSAGES.HABIT_NOT_FOUND);
+  }
+
+  const isInvalidStudy = existingHabits.some(
+    (habit) => habit.studyId !== Number(studyId),
+  );
+  if (isInvalidStudy) {
+    throw new BadRequestException(
+      '해당 스터디에 속하지 않은 습관이 포함되어 있습니다.',
+    );
+  }
+
+  const result = await habitRepository.removehabits(
+    Number(studyId),
+    targetHabitIds,
+  );
+
+  // $transaction 배열 결과이므로 result[0].count가 습관 삭제 개수
+  return {
+    deletedCount: result[0].count,
+  };
+};
+
+export const getWeeklyRecords = async (studyId, targetDate, page, pageSize) => {
+  const numericStudyId = Number(studyId);
+  const study = await studyRepository.findActiveStudyOnly(numericStudyId);
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
+  const base = dayjs.tz(targetDate);
+  if (!base.isValid()) {
+    throw new BadRequestException(ERROR_MESSAGES.INVALID_DATE_FORMAT);
+  }
+
+  const startDate = base.startOf('isoWeek').format('YYYY-MM-DD');
+  const endDate = base.endOf('isoWeek').format('YYYY-MM-DD');
+
+  const { totalCount, habits } =
+    await habitRepository.findHabitsWithRecordsByStudyIdAndDateRange(
+      numericStudyId,
+      startDate,
+      endDate,
+      page,
+      pageSize,
+    );
+
+  const weekDays = Array.from({ length: 7 }, (_, i) =>
+    base.startOf('isoWeek').add(i, 'day').format('YYYY-MM-DD'),
+  );
+
+  const formattedHabits = habits.map((habit) => {
+    const weeklyRecords = weekDays.map((dateStr) => {
+      const foundRecord = habit.records.find(
+        (rec) => dayjs.tz(rec.recordDate).format('YYYY-MM-DD') === dateStr,
+      );
+
+      return {
+        date: dateStr,
+        record: foundRecord || null,
+      };
+    });
+
+    return {
+      ...habit,
+      weeklyRecords,
+    };
+  });
+
+  return {
+    totalCount,
+    list: formattedHabits,
+  };
+};
+
+export const getMonthlyRecords = async (
+  studyId,
+  targetDate,
+  page,
+  pageSize,
+) => {
+  const numericStudyId = Number(studyId);
+  const study = await studyRepository.findActiveStudyOnly(numericStudyId);
+  if (!study) {
+    throw new NotFoundException(ERROR_MESSAGES.STUDY_NOT_FOUND);
+  }
+
+  const base = dayjs.tz(targetDate);
+  if (!base.isValid()) {
+    throw new BadRequestException(ERROR_MESSAGES.INVALID_DATE_FORMAT);
+  }
+  const startDate = base.subtract(29, 'day').format('YYYY-MM-DD');
+  const endDate = base.format('YYYY-MM-DD');
+
+  const { totalCount, habits } =
+    await habitRepository.findHabitsWithRecordsByStudyIdAndDateRange(
+      numericStudyId,
+      startDate,
+      endDate,
+      page,
+      pageSize,
+    );
+
+  const monthDays = Array.from({ length: 30 }, (_, i) =>
+    base.subtract(29 - i, 'day').format('YYYY-MM-DD'),
+  );
+
+  const formattedHabits = habits.map((habit) => {
+    const monthlyRecords = monthDays.map((dateStr) => {
+      const foundRecord = habit.records.find(
+        (rec) => dayjs.tz(rec.recordDate).format('YYYY-MM-DD') === dateStr,
+      );
+
+      return {
+        date: dateStr,
+        record: foundRecord || null,
+      };
+    });
+
+    return {
+      ...habit,
+      monthlyRecords,
+    };
+  });
+
+  return {
+    totalCount,
+    list: formattedHabits,
+  };
+};
